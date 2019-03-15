@@ -1,0 +1,45 @@
+# import Message from './message.graphql'
+
+type User {
+  id: ID!
+
+  username: String!
+
+  email: String!
+
+  insertedAt: Date!
+
+  updatedAt: Date!
+
+  messages: [Message!]
+
+  role: String!
+}
+
+type Query {
+  me(username: String, email: String, id: ID): User
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+
+  login(input: LoginInput!): User!
+}
+
+# INPUTS
+
+input CreateUserInput {
+  username: String!
+
+  email: String!
+
+  password: String!
+}
+
+input LoginInput {
+  username: String
+
+  email: String
+
+  password: String!
+}

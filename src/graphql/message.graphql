@@ -1,0 +1,46 @@
+# import User from './user.graphql'
+# import PageInfo from './commons.graphql'
+
+type Message {
+  id: ID!
+
+  text: String!
+
+  sender: User!
+
+  insertedAt: Date!
+
+  updatedAt: Date!
+}
+
+type Query {
+  message(input: GetMessageInput): Message
+
+  messages(input: ConnectionInput): [MessageConnection!]
+}
+
+type Mutation {
+  createMessage(input: CreateMessageInput!): Message!
+}
+
+type MessageConnection {
+  pageInfo: PageInfo!
+
+  edges: [Message!]!
+}
+
+# INPUTS
+
+input GetMessageInput {
+  text: String
+}
+
+input ConnectionInput {
+  cursor: String
+
+  limit: Int
+}
+
+input CreateMessageInput {
+  text: String!
+}
