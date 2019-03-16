@@ -4,17 +4,17 @@ import { dbConnectionOptions } from "./typeorm.config";
 import { createUser } from "./accounts.context";
 import { EMAIL_INVALID_FORMAT_ERROR } from "./context.utils";
 
-let connection: Connection;
-
-beforeEach(async () => {
-  connection = await createConnection(dbConnectionOptions);
-});
-
-afterEach(() => {
-  connection.close();
-});
-
 describe("user context", () => {
+  let connection: Connection;
+
+  beforeEach(async () => {
+    connection = await createConnection(dbConnectionOptions);
+  });
+
+  afterEach(() => {
+    connection.close();
+  });
+
   it("creates user successfully", async () => {
     const user = await createUser(
       {
