@@ -10,6 +10,7 @@ import { createConnection } from "typeorm";
 
 import { dbConnectionOptions } from "./typeorm.config";
 import { Context } from "./apollo.utils";
+import { userResolver } from "./user.resolver";
 
 createConnection(dbConnectionOptions)
   .then(async connection => {
@@ -25,6 +26,9 @@ createConnection(dbConnectionOptions)
       typeDefs: (importSchema(
         __dirname + "/graphql/schema.graphql"
       ) as unknown) as DocumentNode,
+
+      resolvers: [userResolver] as any,
+
       introspection: true,
 
       playground: process.env.NODE_ENV === "development",

@@ -14,6 +14,8 @@ type User {
   messages: [Message!]
 
   role: String!
+
+  jwt: String!
 }
 
 type Query {

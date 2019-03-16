@@ -4,8 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "env-cmd .env.dev nodemon --exec \"ts-node src/index.ts\" ",
-    "debug": "env-cmd .env.dev nodemon --exec \"ts-node --inspect --debug-brk src/index.ts\" ",
+    "start": "nodemon --exec \"yarn dev\" ",
+    "start:debug": "nodemon --exec \"yarn debug\" ",
+    "dev": "env-cmd .env.dev ts-node src/index.ts",
+    "debug": "env-cmd .env.dev node --inspect --debug-brk -r ts-node/register src/index.ts",
     "build": "tsc",
     "start:js": "env-cmd .env.dev node dist/index.js",
     "generate": "gql-gen",
@@ -20,13 +22,16 @@
     "graphql": "14.1.1",
     "graphql-import": "0.7.1",
     "graphql-iso-date": "3.6.1",
+    "jsonwebtoken": "8.5.0",
     "morgan": "1.9.1",
     "pg": "7.8.2",
     "reflect-metadata": "0.1.13",
     "typeorm": "0.2.15"
   },
   "devDependencies": {
+    "@types/bcrypt-nodejs": "0.0.30",
     "@types/graphql": "14.0.7",
+    "@types/jsonwebtoken": "8.3.2",
     "@types/morgan": "1.7.35",
     "env-cmd": "8.0.2",
     "graphql-code-generator": "0.18.0",
@@ -43,13 +48,14 @@
       "test/*",
       "docs/*"
     ],
-    "delay": "1500",
+    "delay": "3000",
     "events": {
-      "crash": "kill-port 4997"
+      "crash": "kill-port 4997",
+      "restart": "kill-port 4997"
     },
     "watch": [
       "src"
     ],
-    "ext": ".ts"
+    "ext": ".ts,.graphql"
   }
 }
