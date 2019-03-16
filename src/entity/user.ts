@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn
 } from "typeorm";
+import { IsEmail } from "class-validator";
 
 import { Message } from "./message";
 
@@ -23,6 +24,7 @@ export class User {
   })
   username: string;
 
+  @IsEmail()
   @Column({
     unique: true
   })
