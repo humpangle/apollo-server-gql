@@ -1,9 +1,12 @@
 import bcrypt from "bcrypt-nodejs";
 import jwt from "jsonwebtoken";
+import { validate } from "class-validator";
 
 import { User, toUserObjectLiteral } from "./entity/user";
 import { MeQueryArgs, CreateUserInput } from "./apollo.generated";
-import { Context, PubSubMessage } from "./apollo.utils";
+import { Context } from "./apollo.utils";
+import { Connection } from "typeorm";
+import { normalizeDbError } from "./context.utils";
 
 export function getUserBy(params: MeQueryArgs, { connection }: Context) {
   return connection.getRepository(User).findOne({ where: params });
@@ -11,28 +14,43 @@ export function getUserBy(params: MeQueryArgs, { connection }: Context) {
 
 export async function createUser(
   params: CreateUserInput,
-  { connection, pubSub, secret }: Context
+  connection: Connection
 ) {
   const { username, email, password } = params;
 
   const repo = connection.getRepository(User);
 
-  const user = await repo.save(
-    new User({
-      username,
-      email,
-      passwordHash: bcrypt.hashSync(password, bcrypt.genSaltSync(8))
-    })
-  );
-
-  user.passwordHash = "";
-  user.jwt = await createToken(user, secret);
-
-  pubSub.publish(PubSubMessage.userAdded, {
-    [PubSubMessage.userAdded]: user
+  const userObj = new User({
+    username,
+    email,
+    passwordHash: bcrypt.hashSync(password, bcrypt.genSaltSync(8))
   });
 
-  return user;
+  const errors = await validate(userObj, {
+    validationError: { target: false }
+  });
+
+  if (errors.length > 0) {
+    const formattedErrors = errors.reduce(
+      (acc, { property, constraints }) => {
+        acc[property] = Object.values(constraints)[0];
+        return acc;
+      },
+      {} as { [k: string]: string }
+    );
+
+    throw new Error(JSON.stringify(formattedErrors));
+  }
+
+  try {
+    const user = await repo.save(userObj);
+
+    user.passwordHash = "";
+
+    return user;
+  } catch (error) {
+    throw new Error(normalizeDbError(error.detail));
+  }
 }
 
 export async function createToken(

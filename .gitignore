@@ -7,3 +7,4 @@ temp/
 .env.dev
 .env.staging
 .env.production
+.env.test

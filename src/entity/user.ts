@@ -9,6 +9,7 @@ import {
 import { IsEmail } from "class-validator";
 
 import { Message } from "./message";
+import { EMAIL_INVALID_FORMAT_ERROR } from "../context.utils";
 
 type UserConstructor = Partial<Exclude<User, "messages" | "jwt">>;
 
@@ -24,7 +25,7 @@ export class User {
   })
   username: string;
 
-  @IsEmail()
+  @IsEmail({}, { message: EMAIL_INVALID_FORMAT_ERROR })
   @Column({
     unique: true
   })

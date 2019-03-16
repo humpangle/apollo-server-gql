@@ -12,7 +12,8 @@
     "start:js": "env-cmd .env.dev node dist/index.js",
     "generate": "gql-gen",
     "generate:watch": "gql-gen --watch",
-    "typeorm": "ts-node ./node_modules/typeorm/cli.js"
+    "typeorm": "ts-node ./node_modules/typeorm/cli.js",
+    "test": "env-cmd .env.test jest --watch"
   },
   "dependencies": {
     "apollo-server-express": "2.4.8",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@types/bcrypt-nodejs": "0.0.30",
     "@types/graphql": "14.0.7",
+    "@types/jest": "24.0.11",
     "@types/jsonwebtoken": "8.3.2",
     "@types/morgan": "1.7.35",
     "env-cmd": "8.0.2",
@@ -39,15 +41,18 @@
     "graphql-codegen-typescript-common": "0.18.0",
     "graphql-codegen-typescript-resolvers": "0.18.0",
     "graphql-codegen-typescript-server": "0.18.0",
+    "jest": "24.5.0",
     "kill-port": "1.3.2",
     "nodemon": "1.18.10",
+    "ts-jest": "24.0.0",
     "ts-node": "8.0.3",
     "typescript": "3.3.3333"
   },
   "nodemonConfig": {
     "ignore": [
       "test/*",
-      "docs/*"
+      "docs/*",
+      "**/*.test.*"
     ],
     "delay": "3000",
     "events": {
