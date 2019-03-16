@@ -1,8 +1,7 @@
 import bcrypt from "bcrypt-nodejs";
-import jwt from "jsonwebtoken";
 import { validate } from "class-validator";
 
-import { User, toUserObjectLiteral } from "./entity/user";
+import { User } from "./entity/user";
 import { MeQueryArgs, CreateUserInput } from "./apollo.generated";
 import { Context } from "./apollo.utils";
 import { Connection } from "typeorm";
@@ -51,12 +50,4 @@ export async function createUser(
   } catch (error) {
     throw new Error(normalizeDbError(error.detail));
   }
-}
-
-export async function createToken(
-  user: User,
-  secret: string,
-  expiresIn: string = "30min"
-) {
-  return await jwt.sign(toUserObjectLiteral(user), secret, { expiresIn });
 }

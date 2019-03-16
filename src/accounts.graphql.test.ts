@@ -1,12 +1,14 @@
 import gql from "graphql-tag";
-import { createConnection, Connection } from "typeorm";
+import { GraphQLError } from "graphql";
+import { GraphQLResponse } from "graphql-extensions";
+import { ApolloError } from "apollo-server-core";
 
-import { dbConnectionOptions } from "./typeorm.config";
 import { constructTestServer } from "./test-utils";
 import { CreateUserMutationArgs } from "./apollo.generated";
 import { User } from "./entity/user";
-import { GraphQLError } from "graphql";
-import { GraphQLResponse } from "graphql-extensions";
+
+jest.mock("./accounts.context");
+
 import { createUser } from "./accounts.context";
 
 const CREATE_USER = gql`
@@ -17,27 +19,21 @@ const CREATE_USER = gql`
   }
 `;
 
-let connection: Connection;
-
-beforeEach(async () => {
-  connection = await createConnection(dbConnectionOptions);
-});
-
-afterEach(() => {
-  connection.close();
-});
-
 describe("Mutations", () => {
   it("creates user successfully", async () => {
-    const { mutate } = constructTestServer(connection);
+    const input = {
+      username: "123456",
+      email: "a@b.com",
+      password: "123456"
+    };
 
     const variables: CreateUserMutationArgs = {
-      input: {
-        username: "123456",
-        email: "a@b.com",
-        password: "123456"
-      }
+      input
     };
+
+    (createUser as jest.Mock).mockReturnValue(Promise.resolve({ ...input }));
+
+    const { mutate } = constructTestServer();
 
     const result = await mutate({
       mutation: CREATE_USER,
@@ -48,16 +44,11 @@ describe("Mutations", () => {
   });
 
   it("does not create user but returns error", async () => {
-    await createUser(
-      {
-        username: "123456",
-        password: "123456",
-        email: "a@b.com"
-      },
-      connection
+    (createUser as jest.Mock).mockReturnValue(
+      Promise.reject(new ApolloError("already exists"))
     );
 
-    const { mutate } = constructTestServer(connection);
+    const { mutate } = constructTestServer();
 
     const variables: CreateUserMutationArgs = {
       input: {

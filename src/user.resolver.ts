@@ -1,5 +1,6 @@
 import { IResolvers } from "./apollo.generated";
-import { getUserBy, createUser, createToken } from "./accounts.context";
+import { getUserBy, createUser } from "./accounts.context";
+import { createToken } from "./context.utils";
 import { PubSubMessage } from "./apollo.utils";
 
 export const userResolver = {
