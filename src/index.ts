@@ -1,16 +1,12 @@
-import "reflect-metadata";
 import cors from "cors";
 import express from "express";
 import logger from "morgan";
 import { ApolloServer, PubSub } from "apollo-server-express";
 import { createServer } from "http";
-import { importSchema } from "graphql-import";
-import { DocumentNode } from "graphql";
 import { createConnection } from "typeorm";
 
 import { dbConnectionOptions } from "./typeorm.config";
-import { Context } from "./apollo.utils";
-import { userResolver } from "./user.resolver";
+import { Context, typeDefsAndResolvers } from "./apollo.utils";
 
 createConnection(dbConnectionOptions)
   .then(async connection => {
@@ -23,11 +19,7 @@ createConnection(dbConnectionOptions)
     app.use(logger("dev"));
 
     const apollo = new ApolloServer({
-      typeDefs: (importSchema(
-        __dirname + "/graphql/schema.graphql"
-      ) as unknown) as DocumentNode,
-
-      resolvers: [userResolver] as any,
+      ...typeDefsAndResolvers,
 
       introspection: true,
 
