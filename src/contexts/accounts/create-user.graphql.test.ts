@@ -3,13 +3,13 @@ import { GraphQLError } from "graphql";
 import { GraphQLResponse } from "graphql-extensions";
 import { ApolloError } from "apollo-server-core";
 
-import { constructTestServer } from "./test-utils";
-import { CreateUserMutationArgs } from "./apollo.generated";
-import { User } from "./entity/user";
+import { constructTestServer } from "../../test-utils";
+import { CreateUserMutationArgs } from "../../apollo.generated";
+import { User } from "../../entity/user";
 
-jest.mock("./accounts.context");
+jest.mock("./create-user");
 
-import { createUser } from "./accounts.context";
+import { createUser } from "./create-user";
 
 const CREATE_USER = gql`
   mutation CreateAUser($input: CreateUserInput!) {

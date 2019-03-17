@@ -2,9 +2,9 @@ import bcrypt from "bcrypt-nodejs";
 import { validate } from "class-validator";
 import { Connection } from "typeorm";
 
-import { User } from "./entity/user";
-import { CreateUserInput } from "./apollo.generated";
-import { normalizeDbError } from "./context.utils";
+import { User } from "../../entity/user";
+import { CreateUserInput } from "../../apollo.generated";
+import { normalizeDbError } from "../../context.utils";
 
 export async function createUser(
   params: CreateUserInput,

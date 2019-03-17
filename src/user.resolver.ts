@@ -1,5 +1,5 @@
 import { IResolvers } from "./apollo.generated";
-import { createUser } from "./accounts.context";
+import { createUser } from "./contexts/accounts/create-user";
 import { createToken } from "./context.utils";
 import { PubSubMessage } from "./apollo.utils";
 
