@@ -13,7 +13,8 @@
     "generate": "gql-gen",
     "generate:watch": "gql-gen --watch",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
-    "test": "env-cmd .env.test jest --watch"
+    "test": "env-cmd .env.test jest --watch",
+    "test:coverage": "env-cmd .env.test jest --coverage"
   },
   "dependencies": {
     "apollo-server-express": "2.4.8",

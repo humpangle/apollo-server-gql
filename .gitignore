@@ -8,3 +8,4 @@ temp/
 .env.staging
 .env.production
 .env.test
+coverage/
