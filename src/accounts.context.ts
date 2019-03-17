@@ -1,15 +1,10 @@
 import bcrypt from "bcrypt-nodejs";
 import { validate } from "class-validator";
+import { Connection } from "typeorm";
 
 import { User } from "./entity/user";
-import { MeQueryArgs, CreateUserInput } from "./apollo.generated";
-import { Context } from "./apollo.utils";
-import { Connection } from "typeorm";
+import { CreateUserInput } from "./apollo.generated";
 import { normalizeDbError } from "./context.utils";
-
-export function getUserBy(params: MeQueryArgs, { connection }: Context) {
-  return connection.getRepository(User).findOne({ where: params });
-}
 
 export async function createUser(
   params: CreateUserInput,

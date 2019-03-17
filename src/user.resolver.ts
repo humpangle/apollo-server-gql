@@ -1,14 +1,10 @@
 import { IResolvers } from "./apollo.generated";
-import { getUserBy, createUser } from "./accounts.context";
+import { createUser } from "./accounts.context";
 import { createToken } from "./context.utils";
 import { PubSubMessage } from "./apollo.utils";
 
 export const userResolver = {
-  Query: {
-    me: (parent, args, context) => {
-      return getUserBy(args, context);
-    }
-  },
+  Query: {},
 
   Mutation: {
     createUser: async (parent, { input: args }, context) => {
