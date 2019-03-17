@@ -21,7 +21,7 @@ createConnection(dbConnectionOptions)
     const apollo = new ApolloServer({
       ...typeDefsAndResolvers,
 
-      introspection: true,
+      introspection: process.env.NODE_ENV === "development",
 
       playground: process.env.NODE_ENV === "development",
 
