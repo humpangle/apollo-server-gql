@@ -11,7 +11,12 @@ import { IsEmail } from "class-validator";
 import { Message } from "./message";
 import { EMAIL_INVALID_FORMAT_ERROR } from "../context.utils";
 
-type UserConstructor = Partial<Exclude<User, "messages" | "jwt">>;
+interface UserConstructor {
+  username: string;
+  email: string;
+  name?: string;
+  id?: number;
+}
 
 @Entity({
   name: "users"
@@ -36,6 +41,12 @@ export class User {
   })
   passwordHash: string;
 
+  @Column({
+    name: "name",
+    nullable: true
+  })
+  name?: string;
+
   @CreateDateColumn({
     name: "inserted_at"
   })
@@ -51,29 +62,29 @@ export class User {
 
   jwt?: string;
 
-  constructor(params: UserConstructor = {}) {
+  constructor(params: UserConstructor = {} as UserConstructor) {
     Object.entries(params).forEach(([attr, value]) => {
       if (value) {
-        this[attr as keyof UserConstructor] = value;
+        (this as UserConstructor)[attr as keyof UserConstructor] = value;
       }
     });
   }
 }
 
-type UserObject = Pick<
-  User,
-  "id" | "username" | "email" | "passwordHash" | "insertedAt" | "updatedAt"
->;
+export interface UserObject {
+  id: number;
+  username: string;
+  email: string;
+  name?: string;
+}
 
 export function toUserObjectLiteral(
   user: User
-): { [k in keyof UserObject]: UserObject[k] } {
+): { [k in keyof UserObject]: User[k] } {
   return {
     id: user.id,
     username: user.username,
     email: user.email,
-    passwordHash: user.passwordHash,
-    insertedAt: user.insertedAt,
-    updatedAt: user.updatedAt
+    name: user.name
   };
 }
