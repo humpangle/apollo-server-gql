@@ -12,8 +12,6 @@ export async function createUser(
 ) {
   const { username, email, password } = params;
 
-  const repo = connection.getRepository(User);
-
   const userObj = new User({
     username,
     email,
@@ -35,6 +33,8 @@ export async function createUser(
 
     throw new Error(JSON.stringify(formattedErrors));
   }
+
+  const repo = connection.getRepository(User);
 
   try {
     const user = await repo.save(userObj);
