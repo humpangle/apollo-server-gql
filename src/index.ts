@@ -28,7 +28,7 @@ createConnection(dbConnectionOptions)
       context: async () => {
         const context: Context = {
           connection,
-          secret: process.env.SECRET || "x",
+          secret: process.env.SECRET || "",
           pubSub: new PubSub()
         };
 
