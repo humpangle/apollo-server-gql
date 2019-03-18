@@ -5,7 +5,7 @@ import { execute, toPromise, GraphQLRequest, FetchResult } from "apollo-link";
 import fetch from "node-fetch";
 import Observable from "zen-observable-ts";
 
-import { Context, typeDefsAndResolvers } from "./apollo.utils";
+import { Context, typeDefsAndResolvers } from "./apollo-setup";
 import { Server } from "http";
 
 interface ConstructTestServerArgs {

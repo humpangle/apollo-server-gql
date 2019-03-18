@@ -8,7 +8,7 @@ generates:
       - "typescript-server"
       - "typescript-resolvers"
     config:
-      contextType: ./apollo.utils#Context
+      contextType: ./apollo-setup#Context
       mappers:
         User: ./entity/user#User
         Message: ./entity/message#Message

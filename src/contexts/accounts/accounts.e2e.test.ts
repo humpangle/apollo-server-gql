@@ -1,7 +1,7 @@
 import { Connection, createConnection } from "typeorm";
 import { GraphQLError } from "graphql";
 
-import { constructServer } from "../../apollo.utils";
+import { constructServer } from "../../apollo-setup";
 import {
   startTestServer,
   ExecuteGraphqlFn,

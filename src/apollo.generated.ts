@@ -145,7 +145,7 @@ import { User } from "./entity/user";
 
 import { Message } from "./entity/message";
 
-import { Context } from "./apollo.utils";
+import { Context } from "./apollo-setup";
 
 export type Resolver<Result, Parent = {}, TContext = {}, Args = {}> = (
   parent: Parent,

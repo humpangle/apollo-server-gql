@@ -6,6 +6,6 @@ module.exports = {
   coverageReporters: ["json", "lcov", "text", "clover"],
   testPathIgnorePatterns: [
     "<rootDir>/node_modules/",
-    "<rootDir>/src/contexts/accounts/create-user.test.ts"
+    "<rootDir>/src/.+?db.test.ts"
   ]
 };
