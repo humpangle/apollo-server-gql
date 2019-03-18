@@ -4,7 +4,7 @@ import {
   getUserFromRequest,
   INVALID_SESSION_MESSAGE,
   AUTHORIZATION_HEADER_PREFIX
-} from "./get-user-from-request";
+} from "./apollo-setup";
 import { User, UserObject } from "./entity/user";
 import { createToken } from "./context.utils";
 import { USER_CREATION_DATA } from "./contexts/accounts/accounts-test-utils";
