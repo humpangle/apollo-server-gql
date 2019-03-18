@@ -10,11 +10,10 @@ export async function createUser(
   params: CreateUserInput,
   connection: Connection
 ) {
-  const { username, email, password } = params;
+  const { password } = params;
 
   const userObj = new User({
-    username,
-    email,
+    ...params,
     passwordHash: bcrypt.hashSync(password, bcrypt.genSaltSync(8))
   });
 

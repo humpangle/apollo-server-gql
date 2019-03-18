@@ -5,7 +5,7 @@ import { ApolloError } from "apollo-server-core";
 import { constructTestServer } from "../../test-utils";
 import { CreateUserMutationArgs } from "../../apollo.generated";
 import { User } from "../../entity/user";
-import { CREATE_USER } from "./accounts-test-utils";
+import { CREATE_USER, USER_CREATION_DATA } from "./accounts-test-utils";
 
 jest.mock("./create-user");
 
@@ -13,17 +13,13 @@ import { createUser } from "./create-user";
 
 describe("Mutations", () => {
   it("creates user successfully", async () => {
-    const input = {
-      username: "123456",
-      email: "a@b.com",
-      password: "123456"
-    };
-
     const variables: CreateUserMutationArgs = {
-      input
+      input: USER_CREATION_DATA
     };
 
-    (createUser as jest.Mock).mockReturnValue(Promise.resolve({ ...input }));
+    (createUser as jest.Mock).mockReturnValue(
+      Promise.resolve({ ...USER_CREATION_DATA })
+    );
 
     const { mutate } = constructTestServer();
 
@@ -43,11 +39,7 @@ describe("Mutations", () => {
     const { mutate } = constructTestServer();
 
     const variables: CreateUserMutationArgs = {
-      input: {
-        username: "123456",
-        email: "a@b.com",
-        password: "123456"
-      }
+      input: USER_CREATION_DATA
     };
 
     const result = (await mutate({

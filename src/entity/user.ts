@@ -17,6 +17,8 @@ interface UserConstructor {
   name?: string;
   id?: number;
   passwordHash?: string;
+  firstName: string;
+  lastName: string;
 }
 
 @Entity({
@@ -43,10 +45,14 @@ export class User {
   passwordHash: string;
 
   @Column({
-    name: "name",
-    nullable: true
+    name: "first_name"
   })
-  name?: string;
+  firstName: string;
+
+  @Column({
+    name: "last_name"
+  })
+  lastName: string;
 
   @CreateDateColumn({
     name: "inserted_at"
@@ -76,7 +82,8 @@ export interface UserObject {
   id: number;
   username: string;
   email: string;
-  name?: string;
+  firstName: string;
+  lastName: string;
 }
 
 export function toUserObjectLiteral(
@@ -86,6 +93,7 @@ export function toUserObjectLiteral(
     id: user.id,
     username: user.username,
     email: user.email,
-    name: user.name
+    firstName: user.firstName,
+    lastName: user.lastName
   };
 }

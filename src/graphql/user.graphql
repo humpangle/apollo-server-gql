@@ -16,6 +16,10 @@ type User {
   role: String!
 
   jwt: String!
+
+  firstName: String!
+
+  lastName: String!
 }
 
 type Query {
@@ -36,6 +40,10 @@ input CreateUserInput {
   email: String!
 
   password: String!
+
+  firstName: String!
+
+  lastName: String!
 }
 
 input LoginInput {

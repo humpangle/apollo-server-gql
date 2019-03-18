@@ -16,6 +16,10 @@ export interface CreateUserInput {
   email: string;
 
   password: string;
+
+  firstName: string;
+
+  lastName: string;
 }
 
 export interface LoginInput {
@@ -60,6 +64,12 @@ export interface User {
   messages?: Maybe<Message[]>;
 
   role: string;
+
+  jwt: string;
+
+  firstName: string;
+
+  lastName: string;
 }
 
 export interface Message {
@@ -246,6 +256,12 @@ export namespace UserResolvers {
     messages?: MessagesResolver<Maybe<Message[]>, TypeParent, TContext>;
 
     role?: RoleResolver<string, TypeParent, TContext>;
+
+    jwt?: JwtResolver<string, TypeParent, TContext>;
+
+    firstName?: FirstNameResolver<string, TypeParent, TContext>;
+
+    lastName?: LastNameResolver<string, TypeParent, TContext>;
   }
 
   export type IdResolver<
@@ -279,6 +295,21 @@ export namespace UserResolvers {
     TContext = Context
   > = Resolver<R, Parent, TContext>;
   export type RoleResolver<
+    R = string,
+    Parent = User,
+    TContext = Context
+  > = Resolver<R, Parent, TContext>;
+  export type JwtResolver<
+    R = string,
+    Parent = User,
+    TContext = Context
+  > = Resolver<R, Parent, TContext>;
+  export type FirstNameResolver<
+    R = string,
+    Parent = User,
+    TContext = Context
+  > = Resolver<R, Parent, TContext>;
+  export type LastNameResolver<
     R = string,
     Parent = User,
     TContext = Context
