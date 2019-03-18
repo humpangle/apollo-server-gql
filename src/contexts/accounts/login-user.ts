@@ -1,9 +1,8 @@
-import bcrypt from "bcrypt-nodejs";
 import { Connection } from "typeorm";
 import { UserInputError } from "apollo-server-core";
 
-import { User } from "../../entity/user";
 import { LoginInput } from "../../apollo.generated";
+import { getOneUser, verifyHashSync } from "../../entity/database";
 
 export const INVALID_LOGIN_INPUT_ERROR = "invalid username email or password";
 
@@ -23,17 +22,13 @@ export async function loginUser(params: LoginInput, connection: Connection) {
     throw new UserInputError(INVALID_LOGIN_INPUT_ERROR);
   }
 
-  const user = await connection
-    .getRepository(User)
-    .createQueryBuilder("user")
-    .where(where, queryArgs)
-    .getOne();
+  const user = await getOneUser(connection, where, queryArgs);
 
   if (!user) {
     throw new UserInputError(INVALID_LOGIN_INPUT_ERROR);
   }
 
-  if (!bcrypt.compareSync(password, user.passwordHash)) {
+  if (!verifyHashSync(password, user.passwordHash)) {
     throw new UserInputError(INVALID_LOGIN_INPUT_ERROR);
   }
 
