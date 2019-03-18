@@ -19,14 +19,14 @@ jest.mock(".");
 import { createUser, loginUser, INVALID_LOGIN_INPUT_ERROR } from ".";
 
 describe("Create user mutations", () => {
+  const mockCreateUser = createUser as jest.Mock;
+
   it("creates user successfully", async () => {
     const variables: CreateUserMutationArgs = {
       input: USER_CREATION_DATA
     };
 
-    (createUser as jest.Mock).mockReturnValue(
-      Promise.resolve({ ...USER_CREATION_DATA })
-    );
+    mockCreateUser.mockResolvedValue({ ...USER_CREATION_DATA });
 
     const { mutate } = constructTestServer();
 
@@ -39,9 +39,7 @@ describe("Create user mutations", () => {
   });
 
   it("does not create user but returns error", async () => {
-    (createUser as jest.Mock).mockReturnValue(
-      Promise.reject(new ApolloError("already exists"))
-    );
+    mockCreateUser.mockRejectedValue(new ApolloError("already exists"));
 
     const { mutate } = constructTestServer();
 
