@@ -16,6 +16,7 @@ interface UserConstructor {
   email: string;
   name?: string;
   id?: number;
+  passwordHash?: string;
 }
 
 @Entity({
