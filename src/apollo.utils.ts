@@ -1,17 +1,28 @@
 import "reflect-metadata";
 import { Connection } from "typeorm";
-import { PubSub, ApolloServerExpressConfig } from "apollo-server-express";
+import {
+  PubSub,
+  ApolloServerExpressConfig,
+  ApolloServer
+} from "apollo-server-express";
 import { importSchema } from "graphql-import";
 import { DocumentNode } from "graphql";
+import cors from "cors";
+import express, { Express as AppExpress } from "express";
+import logger from "morgan";
+import { ContextFunction } from "apollo-server-core";
+import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
+import { createServer } from "http";
 
 import { userResolver } from "./user.resolver";
-import { User } from "./entity/user";
+import { UserObject } from "./entity/user";
+import { getUserFromRequest } from "./get-user-from-request";
 
 export interface Context {
   connection: Connection;
   pubSub: PubSub;
   secret: string;
-  currentUser?: User | null;
+  currentUser?: UserObject | null;
 }
 
 export enum PubSubMessage {
@@ -28,3 +39,79 @@ export const typeDefsAndResolvers: Pick<
 
   resolvers: [userResolver] as any
 };
+
+const IS_DEV = process.env.NODE_ENV === "development";
+
+export type UserGetterFunc = (
+  req: AppExpress["request"],
+  secret: string
+) => Promise<UserObject | null>;
+
+export type MakeContext = (
+  connection: Connection,
+  secret?: string | undefined,
+  userGetterFunc?: UserGetterFunc | undefined
+) => ContextFunction<ExpressContext, Context>;
+
+const defaultContextFn: MakeContext = (
+  connection,
+  secret = "",
+  userGetterFunc = getUserFromRequest
+) => async ({ req }) => {
+  return {
+    connection,
+    secret,
+    pubSub: new PubSub(),
+    currentUser: await userGetterFunc(req, secret)
+  };
+};
+
+export function constructServer(
+  connection: Connection,
+  secret: string,
+  contextFn: MakeContext = defaultContextFn
+) {
+  const app = express();
+  app.use(cors());
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
+
+  if (IS_DEV) {
+    app.use(logger("dev"));
+  }
+
+  const apolloServer = new ApolloServer({
+    ...typeDefsAndResolvers,
+
+    introspection: IS_DEV,
+
+    playground: IS_DEV,
+
+    context: contextFn(connection, secret)
+  });
+
+  const GRAPHQL_PATH = "/graphql";
+
+  apolloServer.applyMiddleware({
+    app,
+    path: GRAPHQL_PATH
+  });
+
+  // Wrap the Express server
+  const webServer = createServer(app);
+
+  apolloServer.installSubscriptionHandlers(webServer);
+
+  /**
+   * We do not start the server here because in development and production,
+   * we start the server automatically whereas in test, we start the server
+   * manually.
+   */
+
+  return {
+    apolloServer,
+    app,
+    webServer,
+    GRAPHQL_PATH
+  };
+}
