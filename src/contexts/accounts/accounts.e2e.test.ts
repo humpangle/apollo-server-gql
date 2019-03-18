@@ -18,8 +18,7 @@ import {
   LoginMutationArgs
 } from "../../apollo.generated";
 import { User } from "../../entity/user";
-import { createUser } from "./create-user";
-import { INVALID_LOGIN_INPUT_ERROR } from "./login-user";
+import { createUser, INVALID_LOGIN_INPUT_ERROR } from ".";
 
 let connection: Connection;
 let stop: () => void;

@@ -1,7 +1,7 @@
 import { createConnection, Connection } from "typeorm";
 
 import { dbConnectionOptions } from "../../typeorm.config";
-import { createUser } from "./create-user";
+import { createUser } from ".";
 import { EMAIL_INVALID_FORMAT_ERROR } from "../../context.utils";
 import { USER_CREATION_DATA } from "./accounts-test-utils";
 

@@ -1,8 +1,7 @@
 import { IResolvers } from "./apollo.generated";
-import { createUser } from "./contexts/accounts/create-user";
+import { createUser, loginUser } from "./contexts/accounts";
 import { createToken } from "./context.utils";
 import { PubSubMessage } from "./apollo.utils";
-import { loginUser } from "./contexts/accounts/login-user";
 
 export const userResolver = {
   Query: {},

@@ -7,9 +7,9 @@ import { CreateUserMutationArgs } from "../../apollo.generated";
 import { User } from "../../entity/user";
 import { CREATE_USER, USER_CREATION_DATA } from "./accounts-test-utils";
 
-jest.mock("./create-user");
+jest.mock(".");
 
-import { createUser } from "./create-user";
+import { createUser } from ".";
 
 describe("Mutations", () => {
   it("creates user successfully", async () => {
