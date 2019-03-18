@@ -1,4 +1,4 @@
-import { User, toUserObjectLiteral } from "./entity/user";
+import { User, toUserObjectLiteral } from "../entity/user";
 import jwt from "jsonwebtoken";
 
 /**

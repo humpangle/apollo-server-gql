@@ -1,7 +1,7 @@
 import { Connection } from "typeorm";
 
 import { createUser, loginUser, INVALID_LOGIN_INPUT_ERROR } from ".";
-import { EMAIL_INVALID_FORMAT_ERROR } from "../../context.utils";
+import { EMAIL_INVALID_FORMAT_ERROR } from "..";
 import { User } from "../../entity/user";
 import { USER_CREATION_DATA } from "./accounts-test-utils";
 import { LoginInput } from "../../apollo.generated";

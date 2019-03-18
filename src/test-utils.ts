@@ -5,15 +5,15 @@ import { execute, toPromise, GraphQLRequest, FetchResult } from "apollo-link";
 import fetch from "node-fetch";
 import Observable from "zen-observable-ts";
 
-import { Context, typeDefsAndResolvers } from "./apollo-setup";
+import { OurContext, typeDefsAndResolvers } from "./apollo-setup";
 import { Server } from "http";
 
 interface ConstructTestServerArgs {
-  context?: Partial<Context>;
+  context?: Partial<OurContext>;
 }
 
 export const constructTestServer = ({
-  context = {} as Context
+  context = {} as OurContext
 }: ConstructTestServerArgs = {}) => {
   const server = new ApolloServer({
     ...typeDefsAndResolvers,
@@ -23,7 +23,7 @@ export const constructTestServer = ({
       secret: "secret",
       pubSub: ({ publish: jest.fn() } as unknown) as PubSub,
       ...context
-    } as Context
+    } as OurContext
   });
 
   return { server, ...createTestClient(server) };

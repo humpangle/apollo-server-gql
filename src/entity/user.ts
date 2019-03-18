@@ -9,7 +9,7 @@ import {
 import { IsEmail } from "class-validator";
 
 import { Message } from "./message";
-import { EMAIL_INVALID_FORMAT_ERROR } from "../context.utils";
+import { EMAIL_INVALID_FORMAT_ERROR } from "../contexts";
 
 interface UserConstructor {
   username: string;

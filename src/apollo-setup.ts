@@ -16,10 +16,10 @@ import { createServer } from "http";
 import jwt from "jsonwebtoken";
 import { AuthenticationError } from "apollo-server-core";
 
-import { userResolver } from "./user.resolver";
+import resolvers from "./resolvers";
 import { UserObject } from "./entity/user";
 
-export interface Context {
+export interface OurContext {
   connection: Connection;
   pubSub: PubSub;
   secret: string;
@@ -38,7 +38,7 @@ export const typeDefsAndResolvers: Pick<
     __dirname + "/graphql/schema.graphql"
   ) as unknown) as DocumentNode,
 
-  resolvers: [userResolver] as any
+  resolvers
 };
 
 const IS_DEV = process.env.NODE_ENV === "development";
@@ -52,7 +52,7 @@ export type MakeContext = (
   connection: Connection,
   secret?: string | undefined,
   userGetterFunc?: UserGetterFunc | undefined
-) => ContextFunction<ExpressContext, Context>;
+) => ContextFunction<ExpressContext, OurContext>;
 
 const defaultContextFn: MakeContext = (
   connection,
@@ -136,12 +136,12 @@ export async function getUserFromRequest(
 
   const [prefix, token] = authorization.split(" ");
 
-  if (prefix !== AUTHORIZATION_HEADER_PREFIX) {
+  if (prefix !== AUTHORIZATION_HEADER_PREFIX || !token) {
     throw new AuthenticationError(INVALID_SESSION_MESSAGE);
   }
 
   try {
-    return await (jwt.verify(token || "", secret) as UserObject);
+    return await (jwt.verify(token, secret) as UserObject);
   } catch (error) {
     throw new AuthenticationError(INVALID_SESSION_MESSAGE);
   }

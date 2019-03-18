@@ -4,7 +4,7 @@ import { UserInputError } from "apollo-server-core";
 
 import { User } from "../../entity/user";
 import { CreateUserInput, LoginInput } from "../../apollo.generated";
-import { normalizeDbError } from "../../context.utils";
+import { normalizeDbError } from "..";
 import {
   saveUser,
   hashSync,

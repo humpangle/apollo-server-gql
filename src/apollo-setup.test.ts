@@ -6,7 +6,7 @@ import {
   AUTHORIZATION_HEADER_PREFIX
 } from "./apollo-setup";
 import { User, UserObject } from "./entity/user";
-import { createToken } from "./context.utils";
+import { createToken } from "./contexts";
 import { USER_CREATION_DATA } from "./contexts/accounts/accounts-test-utils";
 
 it("returns user if authorization in request headers", async () => {

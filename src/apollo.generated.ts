@@ -145,7 +145,7 @@ import { User } from "./entity/user";
 
 import { Message } from "./entity/message";
 
-import { Context } from "./apollo-setup";
+import { OurContext } from "./apollo-setup";
 
 export type Resolver<Result, Parent = {}, TContext = {}, Args = {}> = (
   parent: Parent,
@@ -197,7 +197,7 @@ export type DirectiveResolverFn<TResult, TArgs = {}, TContext = {}> = (
 ) => TResult | Promise<TResult>;
 
 export namespace QueryResolvers {
-  export interface Resolvers<TContext = Context, TypeParent = {}> {
+  export interface Resolvers<TContext = OurContext, TypeParent = {}> {
     me?: MeResolver<Maybe<User>, TypeParent, TContext>;
 
     message?: MessageResolver<Maybe<Message>, TypeParent, TContext>;
@@ -212,7 +212,7 @@ export namespace QueryResolvers {
   export type MeResolver<
     R = Maybe<User>,
     Parent = {},
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext, MeArgs>;
   export interface MeArgs {
     username?: Maybe<string>;
@@ -225,7 +225,7 @@ export namespace QueryResolvers {
   export type MessageResolver<
     R = Maybe<Message>,
     Parent = {},
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext, MessageArgs>;
   export interface MessageArgs {
     input?: Maybe<GetMessageInput>;
@@ -234,7 +234,7 @@ export namespace QueryResolvers {
   export type MessagesResolver<
     R = Maybe<MessageConnection[]>,
     Parent = {},
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext, MessagesArgs>;
   export interface MessagesArgs {
     input?: Maybe<ConnectionInput>;
@@ -242,7 +242,7 @@ export namespace QueryResolvers {
 }
 
 export namespace UserResolvers {
-  export interface Resolvers<TContext = Context, TypeParent = User> {
+  export interface Resolvers<TContext = OurContext, TypeParent = User> {
     id?: IdResolver<string, TypeParent, TContext>;
 
     username?: UsernameResolver<string, TypeParent, TContext>;
@@ -267,57 +267,57 @@ export namespace UserResolvers {
   export type IdResolver<
     R = string,
     Parent = User,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type UsernameResolver<
     R = string,
     Parent = User,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type EmailResolver<
     R = string,
     Parent = User,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type InsertedAtResolver<
     R = Date,
     Parent = User,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type UpdatedAtResolver<
     R = Date,
     Parent = User,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type MessagesResolver<
     R = Maybe<Message[]>,
     Parent = User,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type RoleResolver<
     R = string,
     Parent = User,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type JwtResolver<
     R = string,
     Parent = User,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type FirstNameResolver<
     R = string,
     Parent = User,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type LastNameResolver<
     R = string,
     Parent = User,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
 }
 
 export namespace MessageResolvers {
-  export interface Resolvers<TContext = Context, TypeParent = Message> {
+  export interface Resolvers<TContext = OurContext, TypeParent = Message> {
     id?: IdResolver<string, TypeParent, TContext>;
 
     text?: TextResolver<string, TypeParent, TContext>;
@@ -332,33 +332,33 @@ export namespace MessageResolvers {
   export type IdResolver<
     R = string,
     Parent = Message,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type TextResolver<
     R = string,
     Parent = Message,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type SenderResolver<
     R = User,
     Parent = Message,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type InsertedAtResolver<
     R = Date,
     Parent = Message,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type UpdatedAtResolver<
     R = Date,
     Parent = Message,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
 }
 
 export namespace MessageConnectionResolvers {
   export interface Resolvers<
-    TContext = Context,
+    TContext = OurContext,
     TypeParent = MessageConnection
   > {
     pageInfo?: PageInfoResolver<PageInfo, TypeParent, TContext>;
@@ -369,17 +369,17 @@ export namespace MessageConnectionResolvers {
   export type PageInfoResolver<
     R = PageInfo,
     Parent = MessageConnection,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type EdgesResolver<
     R = Message[],
     Parent = MessageConnection,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
 }
 
 export namespace PageInfoResolvers {
-  export interface Resolvers<TContext = Context, TypeParent = PageInfo> {
+  export interface Resolvers<TContext = OurContext, TypeParent = PageInfo> {
     hasPrevious?: HasPreviousResolver<Maybe<boolean>, TypeParent, TContext>;
 
     hasNext?: HasNextResolver<Maybe<boolean>, TypeParent, TContext>;
@@ -392,27 +392,27 @@ export namespace PageInfoResolvers {
   export type HasPreviousResolver<
     R = Maybe<boolean>,
     Parent = PageInfo,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type HasNextResolver<
     R = Maybe<boolean>,
     Parent = PageInfo,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type EndCursorResolver<
     R = string,
     Parent = PageInfo,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
   export type StartCursorResolver<
     R = string,
     Parent = PageInfo,
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext>;
 }
 
 export namespace MutationResolvers {
-  export interface Resolvers<TContext = Context, TypeParent = {}> {
+  export interface Resolvers<TContext = OurContext, TypeParent = {}> {
     createUser?: CreateUserResolver<User, TypeParent, TContext>;
 
     login?: LoginResolver<User, TypeParent, TContext>;
@@ -423,7 +423,7 @@ export namespace MutationResolvers {
   export type CreateUserResolver<
     R = User,
     Parent = {},
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext, CreateUserArgs>;
   export interface CreateUserArgs {
     input: CreateUserInput;
@@ -432,7 +432,7 @@ export namespace MutationResolvers {
   export type LoginResolver<
     R = User,
     Parent = {},
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext, LoginArgs>;
   export interface LoginArgs {
     input: LoginInput;
@@ -441,7 +441,7 @@ export namespace MutationResolvers {
   export type CreateMessageResolver<
     R = Message,
     Parent = {},
-    TContext = Context
+    TContext = OurContext
   > = Resolver<R, Parent, TContext, CreateMessageArgs>;
   export interface CreateMessageArgs {
     input: CreateMessageInput;
@@ -452,7 +452,7 @@ export namespace MutationResolvers {
 export type SkipDirectiveResolver<Result> = DirectiveResolverFn<
   Result,
   SkipDirectiveArgs,
-  Context
+  OurContext
 >;
 export interface SkipDirectiveArgs {
   /** Skipped when true. */
@@ -463,7 +463,7 @@ export interface SkipDirectiveArgs {
 export type IncludeDirectiveResolver<Result> = DirectiveResolverFn<
   Result,
   IncludeDirectiveArgs,
-  Context
+  OurContext
 >;
 export interface IncludeDirectiveArgs {
   /** Included when true. */
@@ -474,7 +474,7 @@ export interface IncludeDirectiveArgs {
 export type DeprecatedDirectiveResolver<Result> = DirectiveResolverFn<
   Result,
   DeprecatedDirectiveArgs,
-  Context
+  OurContext
 >;
 export interface DeprecatedDirectiveArgs {
   /** Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted using the Markdown syntax (as specified by [CommonMark](https://commonmark.org/). */
@@ -485,7 +485,7 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<Date, any> {
   name: "Date";
 }
 
-export type IResolvers<TContext = Context> = {
+export type IResolvers<TContext = OurContext> = {
   Query?: QueryResolvers.Resolvers<TContext>;
   User?: UserResolvers.Resolvers<TContext>;
   Message?: MessageResolvers.Resolvers<TContext>;
