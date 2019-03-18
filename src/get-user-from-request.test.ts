@@ -7,15 +7,10 @@ import {
 } from "./get-user-from-request";
 import { User, UserObject } from "./entity/user";
 import { createToken } from "./context.utils";
-
-const userCreationArg: UserObject = {
-  username: "123456",
-  email: "123456",
-  id: 1
-};
+import { USER_CREATION_DATA } from "./contexts/accounts/accounts-test-utils";
 
 it("returns user if authorization in request headers", async () => {
-  const user = new User(userCreationArg);
+  const user = new User(USER_CREATION_DATA);
 
   const secret = "secret";
 
@@ -30,11 +25,12 @@ it("returns user if authorization in request headers", async () => {
   return getUserFromRequest(req, secret).then(result => {
     const userFromToken = result as (UserObject & { exp: number; iat: number });
 
-    expect(result).toEqual({
-      ...userCreationArg,
-      exp: userFromToken.exp,
-      iat: userFromToken.iat
-    });
+    const data = { ...USER_CREATION_DATA };
+    delete data.password;
+    delete userFromToken.exp;
+    delete userFromToken.iat;
+
+    expect(result).toEqual(data);
   });
 });
 
