@@ -9,3 +9,4 @@ temp/
 .env.production
 .env.test
 coverage/
+yarn-error.log
