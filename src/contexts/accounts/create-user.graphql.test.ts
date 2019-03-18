@@ -1,4 +1,3 @@
-import gql from "graphql-tag";
 import { GraphQLError } from "graphql";
 import { GraphQLResponse } from "graphql-extensions";
 import { ApolloError } from "apollo-server-core";
@@ -6,18 +5,11 @@ import { ApolloError } from "apollo-server-core";
 import { constructTestServer } from "../../test-utils";
 import { CreateUserMutationArgs } from "../../apollo.generated";
 import { User } from "../../entity/user";
+import { CREATE_USER } from "./accounts-test-utils";
 
 jest.mock("./create-user");
 
 import { createUser } from "./create-user";
-
-const CREATE_USER = gql`
-  mutation CreateAUser($input: CreateUserInput!) {
-    createUser(input: $input) {
-      jwt
-    }
-  }
-`;
 
 describe("Mutations", () => {
   it("creates user successfully", async () => {
