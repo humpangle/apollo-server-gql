@@ -5,13 +5,13 @@ import { EMAIL_INVALID_FORMAT_ERROR } from "../../context.utils";
 import { User } from "../../entity/user";
 import { USER_CREATION_DATA } from "./accounts-test-utils";
 
-const mockSave = jest.fn();
+jest.mock("../../entity/database");
 
-const connection = ({
-  getRepository: () => ({
-    save: mockSave
-  })
-} as unknown) as Connection;
+import { saveUser } from "../../entity/database";
+
+const mockSave = saveUser as jest.Mock;
+
+const connection = ({} as unknown) as Connection;
 
 it("creates user successfully", async () => {
   mockSave.mockReturnValue(Promise.resolve(new User(USER_CREATION_DATA)));

@@ -1,10 +1,10 @@
-import bcrypt from "bcrypt-nodejs";
 import { validate } from "class-validator";
 import { Connection } from "typeorm";
 
 import { User } from "../../entity/user";
 import { CreateUserInput } from "../../apollo.generated";
 import { normalizeDbError } from "../../context.utils";
+import { saveUser, hashSync } from "../../entity/database";
 
 export async function createUser(
   params: CreateUserInput,
@@ -14,7 +14,7 @@ export async function createUser(
 
   const userObj = new User({
     ...params,
-    passwordHash: bcrypt.hashSync(password, bcrypt.genSaltSync(8))
+    passwordHash: hashSync(password)
   });
 
   const errors = await validate(userObj, {
@@ -33,13 +33,9 @@ export async function createUser(
     throw new Error(JSON.stringify(formattedErrors));
   }
 
-  const repo = connection.getRepository(User);
-
   try {
-    const user = await repo.save(userObj);
-
+    const user = await saveUser(connection, userObj);
     user.passwordHash = "";
-
     return user;
   } catch (error) {
     throw new Error(normalizeDbError(error.detail));
