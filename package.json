@@ -10,7 +10,7 @@
     "debug": "env-cmd .env.dev node --inspect --debug-brk -r ts-node/register src/index.ts",
     "build": "tsc",
     "start:js": "env-cmd .env.dev node dist/index.js",
-    "generate": "gql-gen",
+    "generate": "gql-gen && node gql.generated.edit.js",
     "generate:watch": "gql-gen --watch",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
     "test": "env-cmd .env.test jest --watch",
