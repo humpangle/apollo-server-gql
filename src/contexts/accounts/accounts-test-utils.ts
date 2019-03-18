@@ -17,3 +17,12 @@ export const USER_CREATION_DATA: CreateUserInput = {
   firstName: "kanmii",
   lastName: "ademii"
 };
+
+export const LOGIN_USER_MUTATION = gql`
+  mutation LoginUser($input: LoginInput!) {
+    login(input: $input) {
+      id
+      jwt
+    }
+  }
+`;

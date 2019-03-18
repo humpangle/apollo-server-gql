@@ -8,10 +8,18 @@ import {
   toGraphQlPromise
 } from "../../test-utils";
 import { dbConnectionOptions } from "../../typeorm.config";
-import { CREATE_USER, USER_CREATION_DATA } from "./accounts-test-utils";
-import { CreateUserMutationArgs } from "../../apollo.generated";
+import {
+  CREATE_USER,
+  USER_CREATION_DATA,
+  LOGIN_USER_MUTATION
+} from "./accounts-test-utils";
+import {
+  CreateUserMutationArgs,
+  LoginMutationArgs
+} from "../../apollo.generated";
 import { User } from "../../entity/user";
 import { createUser } from "./create-user";
+import { INVALID_LOGIN_INPUT_ERROR } from "./login-user";
 
 let connection: Connection;
 let stop: () => void;
@@ -75,6 +83,52 @@ describe("User mutation", () => {
       JSON.stringify({
         username: "already exists."
       })
+    );
+  });
+
+  it("logs in user successfully", async () => {
+    const user = await createUser(USER_CREATION_DATA, connection);
+    /**
+     * jwt is only available automatically in resolvers
+     */
+    expect(user.jwt).toBeUndefined();
+
+    const variables: LoginMutationArgs = {
+      input: {
+        username: user.username,
+        password: USER_CREATION_DATA.password
+      }
+    };
+
+    const result = await toGraphQlPromise(
+      executeGraphql({
+        query: LOGIN_USER_MUTATION,
+        variables
+      })
+    );
+
+    const login = (result.data as { login: User }).login;
+    expect(login.jwt).toBeTruthy();
+    expect(+login.id).toBe(user.id);
+  });
+
+  it("returns error if user login does not succeed", async () => {
+    const variables: LoginMutationArgs = {
+      input: {
+        username: "unknown",
+        password: "unknown"
+      }
+    };
+
+    const result = await toGraphQlPromise(
+      executeGraphql({
+        query: LOGIN_USER_MUTATION,
+        variables
+      })
+    );
+
+    expect((result.errors as ReadonlyArray<GraphQLError>)[0].message).toMatch(
+      INVALID_LOGIN_INPUT_ERROR
     );
   });
 });
