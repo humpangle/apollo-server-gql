@@ -3,6 +3,7 @@ import { createConnection, Connection } from "typeorm";
 import { dbConnectionOptions } from "../../typeorm.config";
 import { createUser } from "./create-user";
 import { EMAIL_INVALID_FORMAT_ERROR } from "../../context.utils";
+import { USER_CREATION_DATA } from "./accounts-test-utils";
 
 describe("user context", () => {
   let connection: Connection;
@@ -16,34 +17,19 @@ describe("user context", () => {
   });
 
   it("creates user successfully", async () => {
-    const user = await createUser(
-      {
-        username: "123456",
-        password: "123456",
-        email: "a@b.com"
-      },
-      connection
-    );
+    const user = await createUser(USER_CREATION_DATA, connection);
 
     expect(user.passwordHash).toBe("");
   });
 
   it("throws error if username not unique", async () => {
-    await createUser(
-      {
-        username: "123456",
-        password: "123456",
-        email: "a@b.com"
-      },
-      connection
-    );
+    await createUser(USER_CREATION_DATA, connection);
 
     expect.assertions(1);
 
     return createUser(
       {
-        username: "123456",
-        password: "123456",
+        ...USER_CREATION_DATA,
         email: "b@b.com"
       },
       connection
@@ -53,22 +39,14 @@ describe("user context", () => {
   });
 
   it("throws error if email not unique", async () => {
-    await createUser(
-      {
-        username: "123456",
-        password: "123456",
-        email: "a@b.com"
-      },
-      connection
-    );
+    await createUser(USER_CREATION_DATA, connection);
 
     expect.assertions(1);
 
     return createUser(
       {
-        username: "234567",
-        password: "234567",
-        email: "a@b.com"
+        ...USER_CREATION_DATA,
+        username: "234567"
       },
       connection
     ).catch(e => {
@@ -85,8 +63,7 @@ describe("user context", () => {
 
     return createUser(
       {
-        username: "123456",
-        password: "123456",
+        ...USER_CREATION_DATA,
         email: "a@bb."
       },
       connection

@@ -8,7 +8,7 @@ import {
   toGraphQlPromise
 } from "../../test-utils";
 import { dbConnectionOptions } from "../../typeorm.config";
-import { CREATE_USER } from "./accounts-test-utils";
+import { CREATE_USER, USER_CREATION_DATA } from "./accounts-test-utils";
 import { CreateUserMutationArgs } from "../../apollo.generated";
 import { User } from "../../entity/user";
 import { createUser } from "./create-user";
@@ -37,14 +37,8 @@ afterEach(() => {
 
 describe("User mutation", () => {
   it("creates user successfully", async () => {
-    const input = {
-      username: "123456",
-      email: "a@b.com",
-      password: "123456"
-    };
-
     const variables: CreateUserMutationArgs = {
-      input
+      input: USER_CREATION_DATA
     };
 
     const result = await toGraphQlPromise(
@@ -58,19 +52,12 @@ describe("User mutation", () => {
   });
 
   it("returns error if username not unique", async () => {
-    await createUser(
-      {
-        username: "123456",
-        email: "a@b.com",
-        password: "123456"
-      },
-      connection
-    );
+    await createUser(USER_CREATION_DATA, connection);
 
     const input = {
-      username: "123456",
-      email: "a1@b.com",
-      password: "123456"
+      ...USER_CREATION_DATA,
+
+      email: "a1@b.com"
     };
 
     const variables: CreateUserMutationArgs = {

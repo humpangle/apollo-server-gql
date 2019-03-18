@@ -3,6 +3,7 @@ import { Connection } from "typeorm";
 import { createUser } from "./create-user";
 import { EMAIL_INVALID_FORMAT_ERROR } from "../../context.utils";
 import { User } from "../../entity/user";
+import { USER_CREATION_DATA } from "./accounts-test-utils";
 
 const mockSave = jest.fn();
 
@@ -13,23 +14,9 @@ const connection = ({
 } as unknown) as Connection;
 
 it("creates user successfully", async () => {
-  mockSave.mockReturnValue(
-    Promise.resolve(
-      new User({
-        email: "a@b.com",
-        username: "123456"
-      })
-    )
-  );
+  mockSave.mockReturnValue(Promise.resolve(new User(USER_CREATION_DATA)));
 
-  const user = await createUser(
-    {
-      username: "123456",
-      password: "123456",
-      email: "a@b.com"
-    },
-    connection
-  );
+  const user = await createUser(USER_CREATION_DATA, connection);
 
   expect(user.passwordHash).toBe("");
 });
@@ -42,14 +29,7 @@ it("throws error if username not unique", async () => {
 
   expect.assertions(1);
 
-  return createUser(
-    {
-      username: "123456",
-      password: "123456",
-      email: "b@b.com"
-    },
-    connection
-  ).catch(e => {
+  return createUser(USER_CREATION_DATA, connection).catch(e => {
     expect(e.message).toMatch(JSON.stringify({ username: "already exists." }));
   });
 });
@@ -62,14 +42,7 @@ it("throws error if email not unique", async () => {
 
   expect.assertions(1);
 
-  return createUser(
-    {
-      username: "234567",
-      password: "234567",
-      email: "a@b.com"
-    },
-    connection
-  ).catch(e => {
+  return createUser(USER_CREATION_DATA, connection).catch(e => {
     expect(e.message).toMatch(JSON.stringify({ email: "already exists." }));
   });
 });
@@ -83,8 +56,7 @@ it("throws error if email not properly formatted", async () => {
 
   return createUser(
     {
-      username: "123456",
-      password: "123456",
+      ...USER_CREATION_DATA,
       email: "a@bb."
     },
     connection
