@@ -4,9 +4,11 @@ import { HttpLink } from "apollo-link-http";
 import { execute, toPromise, GraphQLRequest, FetchResult } from "apollo-link";
 import fetch from "node-fetch";
 import Observable from "zen-observable-ts";
+import { HttpOptions } from "apollo-link-http-common";
 
 import { OurContext, typeDefsAndResolvers } from "./apollo-setup";
 import { Server } from "http";
+
 
 interface ConstructTestServerArgs {
   context?: Partial<OurContext>;
@@ -35,10 +37,11 @@ export async function startTestServer({
 }: {
   webServer: Server;
   GRAPHQL_PATH: string;
-}) {
+}, httpOptions: HttpOptions = {} ) {
   await webServer.listen(4996);
 
   const link = new HttpLink({
+    ...httpOptions,
     uri: "http://localhost:4996" + GRAPHQL_PATH,
     fetch
   });

@@ -13,8 +13,8 @@
     "generate": "gql-gen && node gql.generated.edit.js",
     "generate:watch": "gql-gen --watch",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
-    "test": "env-cmd .env.test jest --watch",
-    "test:coverage": "env-cmd .env.test jest --coverage"
+    "test": "env-cmd .env.test jest --runInBand --watch",
+    "test:coverage": "env-cmd .env.test jest --runInBand --coverage"
   },
   "dependencies": {
     "apollo-link": "1.2.11",
@@ -27,6 +27,7 @@
     "graphql": "14.1.1",
     "graphql-import": "0.7.1",
     "graphql-iso-date": "3.6.1",
+    "graphql-resolvers": "0.3.2",
     "graphql-tag": "2.10.1",
     "jsonwebtoken": "8.5.0",
     "morgan": "1.9.1",
@@ -38,6 +39,7 @@
   "devDependencies": {
     "@types/bcrypt-nodejs": "0.0.30",
     "@types/graphql": "14.0.7",
+    "@types/graphql-resolvers": "0.2.0",
     "@types/jest": "24.0.11",
     "@types/jsonwebtoken": "8.3.2",
     "@types/morgan": "1.7.35",

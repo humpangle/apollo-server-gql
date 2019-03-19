@@ -6,8 +6,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn
 } from "typeorm";
+import { MinLength } from "class-validator";
 
-import { User } from "./user";
+import { User, UserObject } from "./user";
 
 @Entity({
   name: "messages"
@@ -16,8 +17,13 @@ export class Message {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  text: string;
+  @MinLength(1, {
+    message: "is required."
+  })
+  @Column({
+    type: "text"
+  })
+  content: string;
 
   @CreateDateColumn({
     name: "inserted_at"
@@ -29,6 +35,22 @@ export class Message {
   })
   updatedAt: Date;
 
-  @ManyToOne(type => User, user => user.messages, { onDelete: "CASCADE" })
+  @ManyToOne(type => User, user => user.messages, {
+    onDelete: "CASCADE",
+    nullable: false
+  })
   sender: User;
+
+  constructor(args: MessageConstructorArgs = {}) {
+    Object.entries(args).forEach(([messageAttribute, attributeValue]) => {
+      if (attributeValue) {
+        this[messageAttribute as keyof MessageConstructorArgs] = attributeValue;
+      }
+    });
+  }
+}
+
+export interface MessageConstructorArgs {
+  sender?: User | UserObject;
+  content?: string;
 }

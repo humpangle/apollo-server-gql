@@ -27,7 +27,9 @@ export interface OurContext {
 }
 
 export enum PubSubMessage {
-  userAdded = "userAdded"
+  userAdded = "userAdded",
+
+  messageCreated = "messageCreated"
 }
 
 export const typeDefsAndResolvers: Pick<

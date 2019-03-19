@@ -11,6 +11,7 @@ import {
   getOneUser,
   verifyHashSync
 } from "../../entity/database";
+import { formatValidationErrors } from "../../entity/validators";
 
 export async function createUser(
   params: CreateUserInput,
@@ -28,13 +29,7 @@ export async function createUser(
   });
 
   if (errors.length > 0) {
-    const formattedErrors = errors.reduce(
-      (acc, { property, constraints }) => {
-        acc[property] = Object.values(constraints)[0];
-        return acc;
-      },
-      {} as { [k: string]: string }
-    );
+    const formattedErrors = formatValidationErrors(errors);
 
     throw new Error(JSON.stringify(formattedErrors));
   }

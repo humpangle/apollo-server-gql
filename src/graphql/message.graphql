@@ -4,7 +4,7 @@
 type Message {
   id: ID!
 
-  text: String!
+  content: String!
 
   sender: User!
 
@@ -32,7 +32,7 @@ type MessageConnection {
 # INPUTS
 
 input GetMessageInput {
-  text: String
+  content: String
 }
 
 input ConnectionInput {
@@ -42,5 +42,5 @@ input ConnectionInput {
 }
 
 input CreateMessageInput {
-  text: String!
+  content: String!
 }
