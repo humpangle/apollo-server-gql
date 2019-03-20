@@ -11,7 +11,7 @@
     "build": "tsc",
     "start:js": "env-cmd .env.dev node dist/index.js",
     "generate": "gql-gen && node gql.generated.edit.js",
-    "generate:watch": "gql-gen --watch",
+    "generate:watch": "chokidar \"./src/graphql/**/*.graphql\" --initial --command \"yarn generate\" ",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
     "test": "env-cmd .env.test jest --runInBand --watch",
     "test:coverage": "env-cmd .env.test jest --runInBand --coverage"
@@ -45,6 +45,7 @@
     "@types/morgan": "1.7.35",
     "@types/node-fetch": "2.1.6",
     "apollo-server-testing": "2.4.8",
+    "chokidar-cli": "1.2.2",
     "env-cmd": "8.0.2",
     "graphql-code-generator": "0.18.0",
     "graphql-codegen-typescript-common": "0.18.0",
