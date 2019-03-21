@@ -7,10 +7,15 @@ createConnection(dbConnectionOptions)
   .then(async connection => {
     const PORT = process.env.PORT;
 
-    const { webServer } = constructServer(connection, process.env.SECRET || "");
+    const { webServer, GRAPHQL_PATH } = constructServer(
+      connection,
+      process.env.SECRET || ""
+    );
 
     webServer.listen(PORT, () => {
-      console.log(`Apollo Server is now running on http://127.0.0.1:${PORT}`);
+      console.log(
+        `Apollo Server is now running on http://127.0.0.1:${PORT}${GRAPHQL_PATH}`
+      );
     });
   })
   .catch(error => console.log(error));
