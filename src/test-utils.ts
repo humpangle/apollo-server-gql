@@ -9,7 +9,6 @@ import { HttpOptions } from "apollo-link-http-common";
 import { OurContext, typeDefsAndResolvers } from "./apollo-setup";
 import { Server } from "http";
 
-
 interface ConstructTestServerArgs {
   context?: Partial<OurContext>;
 }
@@ -31,18 +30,21 @@ export const constructTestServer = ({
   return { server, ...createTestClient(server) };
 };
 
-export async function startTestServer({
-  webServer,
-  GRAPHQL_PATH
-}: {
-  webServer: Server;
-  GRAPHQL_PATH: string;
-}, httpOptions: HttpOptions = {} ) {
+export async function startTestServer(
+  {
+    webServer,
+    GRAPHQL_PATH
+  }: {
+    webServer: Server;
+    GRAPHQL_PATH: string;
+  },
+  httpOptions: HttpOptions = {}
+) {
   await webServer.listen(4996);
 
   const link = new HttpLink({
     ...httpOptions,
-    uri: "http://localhost:4996" + GRAPHQL_PATH,
+    uri: "http://127.0.0.1:4996" + GRAPHQL_PATH,
     fetch
   });
 

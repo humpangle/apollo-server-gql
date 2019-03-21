@@ -10,7 +10,7 @@ createConnection(dbConnectionOptions)
     const { webServer } = constructServer(connection, process.env.SECRET || "");
 
     webServer.listen(PORT, () => {
-      console.log(`Apollo Server is now running on http://localhost:${PORT}`);
+      console.log(`Apollo Server is now running on http://127.0.0.1:${PORT}`);
     });
   })
   .catch(error => console.log(error));
