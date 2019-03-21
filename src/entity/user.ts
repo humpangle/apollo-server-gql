@@ -11,7 +11,7 @@ import { IsEmail } from "class-validator";
 import { Message } from "./message";
 import { EMAIL_INVALID_FORMAT_ERROR } from "../contexts";
 
-interface UserConstructor {
+export interface UserConstructorArgs {
   username: string;
   email: string;
   name?: string;
@@ -64,15 +64,17 @@ export class User {
   })
   updatedAt: Date;
 
-  @OneToMany(type => Message, message => message.sender)
+  @OneToMany(type => Message, message => message.user)
   messages: Message[];
 
   jwt?: string;
 
-  constructor(params: UserConstructor = {} as UserConstructor) {
+  constructor(params: UserConstructorArgs = {} as UserConstructorArgs) {
     Object.entries(params).forEach(([attr, value]) => {
       if (value) {
-        (this as UserConstructor)[attr as keyof UserConstructor] = value;
+        (this as UserConstructorArgs)[
+          attr as keyof UserConstructorArgs
+        ] = value;
       }
     });
   }

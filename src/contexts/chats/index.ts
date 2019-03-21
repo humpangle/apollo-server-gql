@@ -1,20 +1,29 @@
 import { Connection } from "typeorm";
 
-import { CreateMessageInput } from "../../apollo.generated";
+import { CreateMessageInput, ConnectionInput } from "../../apollo.generated";
 import { User, UserObject } from "../../entity/user";
-import { Message } from "../../entity/message";
-import { saveMessage, validateAssociates } from "../../entity/database";
+import {
+  Message,
+  MESSAGE_RAW_PRIMARY_COLUMNS,
+  MESSAGE_ENTITY_PRIMARY_COLUMNS
+} from "../../entity/message";
+import {
+  saveMessage,
+  validateAssociates,
+  getMessages
+} from "../../entity/database";
 import { validate } from "class-validator";
 import { formatValidationErrors } from "../../entity/validators";
+import { paginate } from "../../entity";
 
 export async function createMessage(
   params: CreateMessageInput,
   connection: Connection,
-  sender: User | UserObject
+  user: User | UserObject
 ) {
   const message = new Message({
     ...params,
-    sender
+    user
   });
 
   const validationErrors = await validate(message, {
@@ -27,8 +36,8 @@ export async function createMessage(
 
   const associationErrors = await validateAssociates(connection, {
     type: User,
-    data: <User>sender,
-    field: "sender"
+    data: <User>user,
+    field: "user"
   });
 
   if (associationErrors[0]) {
@@ -36,4 +45,34 @@ export async function createMessage(
   }
 
   return saveMessage(connection, message);
+}
+
+export async function listMessages(
+  connection: Connection,
+  userId?: string | number | null,
+  args?: ConnectionInput | null
+) {
+  return paginate<Message>(
+    getMessages(connection, userId),
+
+    function transformDataFn(rawDbColumnValues) {
+      const messageConstructorAttributes = {} as Message;
+
+      for (let j = 0; j < MESSAGE_RAW_PRIMARY_COLUMNS.length; j++) {
+        const rawColumnName = MESSAGE_RAW_PRIMARY_COLUMNS[j] as keyof Message;
+
+        const entityColumnName = MESSAGE_ENTITY_PRIMARY_COLUMNS[
+          j
+        ] as keyof Message;
+
+        const columnValue = rawDbColumnValues[rawColumnName];
+
+        messageConstructorAttributes[entityColumnName] = columnValue;
+      }
+
+      return new Message(messageConstructorAttributes);
+    },
+
+    args
+  );
 }

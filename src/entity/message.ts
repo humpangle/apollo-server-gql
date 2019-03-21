@@ -4,16 +4,18 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   CreateDateColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  JoinColumn
 } from "typeorm";
 import { MinLength } from "class-validator";
 
 import { User, UserObject } from "./user";
+import { RelayNode } from ".";
 
 @Entity({
   name: "messages"
 })
-export class Message {
+export class Message implements RelayNode {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -39,18 +41,48 @@ export class Message {
     onDelete: "CASCADE",
     nullable: false
   })
-  sender: User;
+  @JoinColumn({
+    name: "user_id"
+  })
+  user: User;
+
+  userId: string | number;
+
+  cursor: string;
 
   constructor(args: MessageConstructorArgs = {}) {
     Object.entries(args).forEach(([messageAttribute, attributeValue]) => {
       if (attributeValue) {
-        this[messageAttribute as keyof MessageConstructorArgs] = attributeValue;
+        (this as MessageConstructorArgs)[
+          messageAttribute as keyof MessageConstructorArgs
+        ] = attributeValue;
       }
     });
   }
 }
 
 export interface MessageConstructorArgs {
-  sender?: User | UserObject;
+  user?: User | UserObject;
+
   content?: string;
+
+  userId?: string | number;
+
+  user_id?: string | number;
 }
+
+export const MESSAGE_RAW_PRIMARY_COLUMNS = [
+  "user_id",
+  "id",
+  "content",
+  "inserted_at",
+  "updated_at"
+];
+
+export const MESSAGE_ENTITY_PRIMARY_COLUMNS = [
+  "userId",
+  "id",
+  "content",
+  "insertedAt",
+  "updatedAt"
+];

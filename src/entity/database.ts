@@ -1,8 +1,12 @@
 import { Connection, EntitySchema, ObjectType } from "typeorm";
 import bcrypt from "bcrypt-nodejs";
 
-import { User } from "./user";
-import { Message } from "./message";
+import { User, UserConstructorArgs } from "./user";
+import {
+  Message,
+  MESSAGE_RAW_PRIMARY_COLUMNS,
+  MessageConstructorArgs
+} from "./message";
 
 export function getOneUser(connection: Connection, ...queryArgs: any) {
   const [queryString, args] = queryArgs;
@@ -71,4 +75,58 @@ export async function validateAssociates<TEntity>(
   }
 
   return [hasError, errors, associates];
+}
+
+export function getMessages(
+  connection: Connection,
+  userId?: string | number | null
+) {
+  return function(offset?: number, limit?: number): Promise<Message[]> {
+    const query = connection
+      .getRepository(Message)
+      .createQueryBuilder("message")
+      .select(MESSAGE_RAW_PRIMARY_COLUMNS);
+
+    if (userId) {
+      query.where("message.user_id = :userId", { userId: userId });
+    }
+
+    if (offset !== undefined) {
+      query.offset(offset);
+    }
+
+    if (limit !== undefined) {
+      query.limit(limit);
+    }
+
+    return query.getRawMany();
+  };
+}
+
+export async function insertManyUsers(
+  connection: Connection,
+  ...args: Array<UserConstructorArgs>
+) {
+  const result = await connection
+    .createQueryBuilder()
+    .insert()
+    .into(User)
+    .values(args)
+    .execute();
+
+  return result.generatedMaps;
+}
+
+export async function insertManyMessages(
+  connection: Connection,
+  ...args: Array<MessageConstructorArgs>
+) {
+  const result = await connection
+    .createQueryBuilder()
+    .insert()
+    .into(Message)
+    .values(args)
+    .execute();
+
+  return result.generatedMaps;
 }

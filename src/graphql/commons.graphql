@@ -1,9 +1,27 @@
 type PageInfo {
-  hasPrevious: Boolean
+  hasPreviousPage: Boolean
 
-  hasNext: Boolean
+  hasNextPage: Boolean
 
-  endCursor: String!
+  startCursor: String
 
-  startCursor: String!
+  endCursor: String
+}
+
+input ConnectionInput {
+  after: String
+
+  first: Int
+
+  before: String
+
+  last: Int
+}
+
+interface Node {
+  id: ID!
+}
+
+interface Connection {
+  pageInfo: PageInfo!
 }

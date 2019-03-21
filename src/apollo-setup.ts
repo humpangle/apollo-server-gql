@@ -34,13 +34,14 @@ export enum PubSubMessage {
 
 export const typeDefsAndResolvers: Pick<
   ApolloServerExpressConfig,
-  "typeDefs" | "resolvers"
+  "typeDefs" | "resolvers" 
 > = {
   typeDefs: (importSchema(
     __dirname + "/graphql/schema.graphql"
   ) as unknown) as DocumentNode,
 
-  resolvers
+  resolvers,
+  
 };
 
 const IS_DEV = process.env.NODE_ENV === "development";

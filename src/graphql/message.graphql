@@ -1,12 +1,12 @@
 # import User from './user.graphql'
-# import PageInfo from './commons.graphql'
+# import PageInfo, ConnectionInput, Node, Connection from './commons.graphql'
 
-type Message {
+type Message implements Node {
   id: ID!
 
   content: String!
 
-  sender: User!
+  user: User!
 
   insertedAt: Date!
 
@@ -16,29 +16,29 @@ type Message {
 type Query {
   message(input: GetMessageInput): Message
 
-  messages(input: ConnectionInput): [MessageConnection!]
+  messages(input: ConnectionInput): MessageConnection!
 }
 
 type Mutation {
   createMessage(input: CreateMessageInput!): Message!
 }
 
-type MessageConnection {
+type MessageConnection implements Connection {
   pageInfo: PageInfo!
 
-  edges: [Message!]!
+  edges: [MessageEdge]!
+}
+
+type MessageEdge {
+  cursor: String!
+
+  node: Message!
 }
 
 # INPUTS
 
 input GetMessageInput {
   content: String
-}
-
-input ConnectionInput {
-  cursor: String
-
-  limit: Int
 }
 
 input CreateMessageInput {

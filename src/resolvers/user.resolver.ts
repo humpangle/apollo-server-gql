@@ -8,11 +8,9 @@ export const userResolver = {
 
   Mutation: {
     createUser: async (parent, { input: args }, context) => {
-      const { secret, pubSub, connection } = context;
+      const { pubSub, connection } = context;
 
       const user = await createUser(args, connection);
-
-      user.jwt = await createToken(user, secret);
 
       pubSub.publish(PubSubMessage.userAdded, {
         [PubSubMessage.userAdded]: user
@@ -22,13 +20,19 @@ export const userResolver = {
     },
 
     login: async (parent, { input: args }, context) => {
-      const { secret, connection } = context;
+      const { connection } = context;
 
       const user = await loginUser(args, connection);
 
-      user.jwt = await createToken(user, secret);
-
       return user;
+    }
+  },
+
+  User: {
+    jwt: (user, args, context) => {
+      const { secret } = context;
+
+      return createToken(user, secret);
     }
   }
 } as IResolvers;
