@@ -22,14 +22,14 @@ import { createUser, INVALID_LOGIN_INPUT_ERROR } from ".";
 
 let connection: Connection;
 let stop: () => void;
-let executeGraphql: ExecuteGraphqlFn;
+let executeGraphqlQuery: ExecuteGraphqlFn;
 
 beforeEach(async () => {
   connection = await createConnection(dbConnectionOptions);
   const server = constructServer(connection, "some secret");
   const testServer = await startTestServer(server);
   stop = testServer.stop;
-  executeGraphql = testServer.graphql;
+  executeGraphqlQuery = testServer.doQuery;
 });
 
 afterEach(() => {
@@ -49,7 +49,7 @@ describe("User mutation", () => {
     };
 
     const result = await toGraphQlPromise(
-      executeGraphql({
+      executeGraphqlQuery({
         query: CREATE_USER,
         variables
       })
@@ -72,7 +72,7 @@ describe("User mutation", () => {
     };
 
     const result = await toGraphQlPromise(
-      executeGraphql({
+      executeGraphqlQuery({
         query: CREATE_USER,
         variables
       })
@@ -100,7 +100,7 @@ describe("User mutation", () => {
     };
 
     const result = await toGraphQlPromise(
-      executeGraphql({
+      executeGraphqlQuery({
         query: LOGIN_USER_MUTATION,
         variables
       })
@@ -120,7 +120,7 @@ describe("User mutation", () => {
     };
 
     const result = await toGraphQlPromise(
-      executeGraphql({
+      executeGraphqlQuery({
         query: LOGIN_USER_MUTATION,
         variables
       })

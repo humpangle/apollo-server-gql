@@ -53,7 +53,7 @@ export async function startTestServer(
 
     stop: () => webServer.close(),
 
-    graphql: function executeOperation({
+    doQuery: function executeOperation({
       query,
       variables = {}
     }: GraphQLRequest) {

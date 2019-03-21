@@ -31,7 +31,7 @@ import { insertManyUsers, insertManyMessages } from "../../entity/database";
 const secret = "secret";
 let connection: Connection;
 let stopServer: () => void;
-let executeGraphql: ExecuteGraphqlFn;
+let executeGraphqlQuery: ExecuteGraphqlFn;
 
 afterEach(() => {
   if (stopServer) {
@@ -54,7 +54,7 @@ describe("Create message mutation", () => {
     };
 
     const result = await toGraphQlPromise(
-      executeGraphql({
+      executeGraphqlQuery({
         query: CREATE_MESSAGE_MUTATION,
 
         variables
@@ -111,7 +111,7 @@ describe("messages query", () => {
     };
 
     const result = await toGraphQlPromise(
-      executeGraphql({
+      executeGraphqlQuery({
         query: LIST_MESSAGES_QUERY,
 
         variables
@@ -152,7 +152,7 @@ async function setUp() {
     connection
   );
 
-  const { stop, graphql } = await startTestServer(
+  const { stop, doQuery } = await startTestServer(
     constructServer(connection, secret),
 
     {
@@ -166,7 +166,7 @@ async function setUp() {
   );
 
   stopServer = stop;
-  executeGraphql = graphql;
+  executeGraphqlQuery = doQuery;
 
   return { user };
 }
