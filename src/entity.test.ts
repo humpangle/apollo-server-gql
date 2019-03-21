@@ -1,4 +1,8 @@
-import { paginate, offsetToCursor } from "./entity";
+import {
+  paginate,
+  offsetToCursor,
+  PAGINATION_ARGS_COMBINATION_ERROR
+} from "./entity";
 import { PageInfo } from "./apollo.generated";
 
 describe("paginate test", () => {
@@ -27,9 +31,7 @@ describe("paginate test", () => {
       first: 1,
       last: 0
     }).catch(error => {
-      expect(error.message).toMatch(
-        'You may not specify both "first" and "last" pagination arguments.'
-      );
+      expect(error.message).toMatch(PAGINATION_ARGS_COMBINATION_ERROR);
     });
   });
 
@@ -40,9 +42,7 @@ describe("paginate test", () => {
       before: "",
       after: ""
     }).catch(error => {
-      expect(error.message).toMatch(
-        'You may not specify both "before" and "after" pagination arguments.'
-      );
+      expect(error.message).toMatch(PAGINATION_ARGS_COMBINATION_ERROR);
     });
   });
 
@@ -59,5 +59,27 @@ describe("paginate test", () => {
     };
 
     expect(pageInfo).toEqual(expectedPageInfo);
+  });
+
+  it("throws error if pagination before and first args specified", () => {
+    expect.assertions(1);
+
+    return paginate(jest.fn(), jest.fn(), {
+      before: "",
+      first: 1
+    }).catch(error => {
+      expect(error.message).toMatch(PAGINATION_ARGS_COMBINATION_ERROR);
+    });
+  });
+
+  it("throws error if pagination after and last args specified", () => {
+    expect.assertions(1);
+
+    return paginate(jest.fn(), jest.fn(), {
+      after: "",
+      last: 1
+    }).catch(error => {
+      expect(error.message).toMatch(PAGINATION_ARGS_COMBINATION_ERROR);
+    });
   });
 });

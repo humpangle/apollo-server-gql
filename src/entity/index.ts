@@ -103,21 +103,31 @@ function offsetFromCursor(opaqueValue: string) {
 
 const MAX_LIMIT = 100;
 
+export const PAGINATION_ARGS_COMBINATION_ERROR =
+  'You may only specify "first" and/or "after" or "last" and/or "before".';
+
 function getOffsetAndLimit(
   args?: ConnectionInput | null
 ): [number, number, boolean] {
   let { first, last, after, before } = (args || {}) as ConnectionInput;
 
-  if (before !== undefined && after !== undefined) {
-    throw new Error(
-      'You may not specify both "before" and "after" pagination arguments.'
-    );
-  }
-
-  if (first !== undefined && last !== undefined) {
-    throw new Error(
-      'You may not specify both "first" and "last" pagination arguments.'
-    );
+  /**
+   * for pagination args, the only legal combinations are:
+   * 1. no args
+   * 2. first only
+   * 3. last only
+   * 4. before only
+   * 5. after only
+   * 6. first and after only
+   * 7. last and before only
+   */
+  if (
+    (first !== undefined && last !== undefined) ||
+    (before !== undefined && after !== undefined) ||
+    (before !== undefined && first !== undefined) ||
+    (after !== undefined && last !== undefined)
+  ) {
+    throw new Error(PAGINATION_ARGS_COMBINATION_ERROR);
   }
 
   const limit =
