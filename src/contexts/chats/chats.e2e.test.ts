@@ -1,11 +1,6 @@
 import { Connection, createConnection } from "typeorm";
 
-import { dbConnectionOptions } from "../../typeorm.config";
-import {
-  startTestServer,
-  ExecuteGraphqlFn,
-  toGraphQlPromise
-} from "../../test-utils";
+import { startTestServer, toGraphQlPromise } from "../../test-utils";
 import {
   constructServer,
   AUTHORIZATION_HEADER_PREFIX
@@ -13,6 +8,7 @@ import {
 import {
   CREATE_MESSAGE_MUTATION,
   LIST_MESSAGES_QUERY
+  // SUBSCRIBE_TO_NEW_MESSAGE
 } from "./chats-test.utils";
 import {
   CreateMessageMutationArgs,
@@ -31,7 +27,6 @@ import { insertManyUsers, insertManyMessages } from "../../entity/database";
 const secret = "secret";
 let connection: Connection;
 let stopServer: () => void;
-let executeGraphqlQuery: ExecuteGraphqlFn;
 
 afterEach(() => {
   if (stopServer) {
@@ -45,7 +40,11 @@ afterEach(() => {
 
 describe("Create message mutation", () => {
   it("creates message successfully", async () => {
-    const { user } = await setUp();
+    const { user, doQuery } = await setUp();
+
+    // doSubscription({
+    //   query: SUBSCRIBE_TO_NEW_MESSAGE
+    // });
 
     const variables: CreateMessageMutationArgs = {
       input: {
@@ -54,7 +53,7 @@ describe("Create message mutation", () => {
     };
 
     const result = await toGraphQlPromise(
-      executeGraphqlQuery({
+      doQuery({
         query: CREATE_MESSAGE_MUTATION,
 
         variables
@@ -79,8 +78,8 @@ describe("Create message mutation", () => {
 });
 
 describe("messages query", () => {
-  it("lists messages", async () => {
-    const { user: user1 } = await setUp();
+  xit("lists messages", async () => {
+    const { user: user1, doQuery } = await setUp();
 
     const userId = "" + user1.id;
 
@@ -111,7 +110,7 @@ describe("messages query", () => {
     };
 
     const result = await toGraphQlPromise(
-      executeGraphqlQuery({
+      doQuery({
         query: LIST_MESSAGES_QUERY,
 
         variables
@@ -145,14 +144,14 @@ describe("messages query", () => {
 });
 
 async function setUp() {
-  connection = await createConnection(dbConnectionOptions);
+  connection = await createConnection();
 
   const user = await createUser(
     { ...USER_CREATION_DATA, username: "bees" },
     connection
   );
 
-  const { stop, doQuery } = await startTestServer(
+  const { stop, doQuery, doSubscription } = await startTestServer(
     constructServer(connection, secret),
 
     {
@@ -166,7 +165,6 @@ async function setUp() {
   );
 
   stopServer = stop;
-  executeGraphqlQuery = doQuery;
 
-  return { user };
+  return { user, doSubscription, doQuery };
 }

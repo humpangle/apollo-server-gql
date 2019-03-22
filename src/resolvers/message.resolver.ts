@@ -19,9 +19,18 @@ const createMessageResolver: MutationResolvers.CreateMessageResolver = async fun
     currentUser
   ));
 
-  pubSub.publish(PubSubMessage.messageCreated, {
-    [PubSubMessage.messageCreated]: message
-  });
+  const subscriptionMessage = {
+    [PubSubMessage.messageCreated]: { message }
+  };
+
+  // tslint:disable-next-line:no-console
+  console.log(
+    "\n\t\tLogging start\n\n\n\n subscriptionMessage\n",
+    subscriptionMessage,
+    "\n\n\n\n\t\tLogging ends\n"
+  );
+
+  // pubSub.publish(PubSubMessage.messageCreated, subscriptionMessage);
 
   return message;
 };
@@ -54,6 +63,14 @@ export const messageResolver: IResolvers = {
 
   Query: {
     messages: combineResolvers(isAuthenticated, messagesResolver)
+  },
+
+  Subscription: {
+    messageCreated: {
+      subscribe: (parent, args, { pubSub }) => {
+        return pubSub.asyncIterator(PubSubMessage.messageCreated);
+      }
+    }
   },
 
   Message: {

@@ -1,5 +1,6 @@
 overwrite: true
 schema: "./src/graphql/schema.graphql"
+require: ts-node/register/transpile-only
 documents: null
 generates:
   ./src/apollo.generated.ts:

@@ -41,3 +41,18 @@ export const LIST_MESSAGES_QUERY = gql`
     }
   }
 `;
+
+export const SUBSCRIBE_TO_NEW_MESSAGE = gql`
+  subscription NewMessageSubscription {
+    messageCreated {
+      message {
+        id
+        content
+
+        user {
+          id
+        }
+      }
+    }
+  }
+`;

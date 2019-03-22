@@ -1,4 +1,4 @@
 # import Query.*, Mutation.* from './user.graphql'
-# import Query.*, Mutation.* from './message.graphql'
+# import Query.*, Mutation.*, Subscription.* from './message.graphql'
 
 scalar Date

@@ -1,9 +1,9 @@
 import { createConnection } from "typeorm";
 
-import { dbConnectionOptions } from "./typeorm.config";
+// import { dbConnectionOptions } from "./typeorm.config";
 import { constructServer } from "./apollo-setup";
 
-createConnection(dbConnectionOptions)
+createConnection()
   .then(async connection => {
     const PORT = process.env.PORT;
 

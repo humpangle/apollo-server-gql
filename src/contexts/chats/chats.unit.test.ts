@@ -1,5 +1,5 @@
 import { createConnection, Connection } from "typeorm";
-import { dbConnectionOptions } from "../../typeorm.config";
+// import { dbConnectionOptions } from "../../../ormconfig";
 import { createMessage, listMessages } from ".";
 import {
   CreateMessageInput,
@@ -14,7 +14,7 @@ import { insertManyUsers, insertManyMessages } from "../../entity/database";
 let connection: Connection;
 
 beforeEach(async () => {
-  connection = await createConnection(dbConnectionOptions);
+  connection = await createConnection();
 });
 
 afterEach(() => {

@@ -1,15 +1,15 @@
 import { createConnection, Connection } from "typeorm";
 
-import { dbConnectionOptions } from "../../typeorm.config";
+// import { dbConnectionOptions } from "../../../ormconfig";
 import { createUser } from ".";
-import { EMAIL_INVALID_FORMAT_ERROR } from "../../context.utils";
+import { EMAIL_INVALID_FORMAT_ERROR } from "..";
 import { USER_CREATION_DATA } from "./accounts-test-utils";
 
 describe("user context", () => {
   let connection: Connection;
 
   beforeEach(async () => {
-    connection = await createConnection(dbConnectionOptions);
+    connection = await createConnection();
   });
 
   afterEach(() => {

@@ -4,10 +4,9 @@ import { GraphQLError } from "graphql";
 import { constructServer } from "../../apollo-setup";
 import {
   startTestServer,
-  ExecuteGraphqlFn,
+  ExecuteGraphqlQueryFn,
   toGraphQlPromise
 } from "../../test-utils";
-import { dbConnectionOptions } from "../../typeorm.config";
 import {
   CREATE_USER,
   USER_CREATION_DATA,
@@ -22,10 +21,10 @@ import { createUser, INVALID_LOGIN_INPUT_ERROR } from ".";
 
 let connection: Connection;
 let stop: () => void;
-let executeGraphqlQuery: ExecuteGraphqlFn;
+let executeGraphqlQuery: ExecuteGraphqlQueryFn;
 
 beforeEach(async () => {
-  connection = await createConnection(dbConnectionOptions);
+  connection = await createConnection();
   const server = constructServer(connection, "some secret");
   const testServer = await startTestServer(server);
   stop = testServer.stop;

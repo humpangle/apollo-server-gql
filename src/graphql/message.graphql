@@ -44,3 +44,13 @@ input GetMessageInput {
 input CreateMessageInput {
   content: String!
 }
+
+# SUBSCRIPTIONS
+
+type Subscription {
+  messageCreated: MessageCreated!
+}
+
+type MessageCreated {
+  message: Message!
+}

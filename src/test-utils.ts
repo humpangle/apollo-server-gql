@@ -5,6 +5,9 @@ import { execute, toPromise, GraphQLRequest, FetchResult } from "apollo-link";
 import fetch from "node-fetch";
 import Observable from "zen-observable-ts";
 import { HttpOptions } from "apollo-link-http-common";
+import { WebSocketLink } from "apollo-link-ws";
+import { SubscriptionClient } from "subscriptions-transport-ws";
+import ws from "ws";
 
 import { OurContext, typeDefsAndResolvers } from "./apollo-setup";
 import { Server } from "http";
@@ -48,21 +51,36 @@ export async function startTestServer(
     fetch
   });
 
+  const wsClient = new SubscriptionClient(
+    "ws://127.0.0.1:4996" + GRAPHQL_PATH,
+    { reconnect: true },
+    ws
+  );
+
+  const wsLink = new WebSocketLink(wsClient);
+
   return {
     link,
 
     stop: () => webServer.close(),
 
-    doQuery: function executeOperation({
-      query,
-      variables = {}
-    }: GraphQLRequest) {
-      return execute(link, { query, variables });
+    doQuery: function executeOperation(operation: GraphQLRequest) {
+      return execute(link, operation);
+    },
+
+    fetch,
+
+    wsLink,
+
+    doSubscription: function executeGraphqlSubscription<T>(
+      operation: GraphQLRequest
+    ) {
+      return toPromise(execute(wsLink, operation));
     }
   };
 }
 
-export type ExecuteGraphqlFn = (
+export type ExecuteGraphqlQueryFn = (
   params: GraphQLRequest
 ) => Observable<
   FetchResult<

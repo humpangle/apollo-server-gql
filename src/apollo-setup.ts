@@ -34,14 +34,13 @@ export enum PubSubMessage {
 
 export const typeDefsAndResolvers: Pick<
   ApolloServerExpressConfig,
-  "typeDefs" | "resolvers" 
+  "typeDefs" | "resolvers"
 > = {
   typeDefs: (importSchema(
     __dirname + "/graphql/schema.graphql"
   ) as unknown) as DocumentNode,
 
-  resolvers,
-  
+  resolvers
 };
 
 const IS_DEV = process.env.NODE_ENV === "development";
@@ -61,7 +60,18 @@ const defaultContextFn: MakeContext = (
   connection,
   secret = "",
   userGetterFunc = getUserFromRequest
-) => async ({ req }) => {
+) => async args => {
+  const { req } = args;
+
+  // tslint:disable-next-line:no-console
+  // console.log(
+  //   "\n\t\tLogging start\n\n\n\n args.connection\n",
+  //   (args as any).connection,
+  //   "\n\nargs.req",
+  //   req,
+  //   "\n\n\n\n\t\tLogging ends\n"
+  // );
+
   return {
     connection,
     secret,
@@ -129,6 +139,13 @@ export async function getUserFromRequest(
   req: AppExpress["request"],
   secret: string
 ): Promise<UserObject | null> {
+  /**
+   * in the case of subscription, Express.request is undefined
+   */
+  if (!req) {
+    return null;
+  }
+
   const {
     headers: { authorization }
   } = req;
