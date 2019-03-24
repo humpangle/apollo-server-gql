@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start:dev": "nodemon --exec \"yarn dev\" ",
+    "start:dev": "nodemon --verbose --exec \"yarn dev\" ",
     "start:debug": "nodemon --exec \"yarn debug\" ",
     "dev": "env-cmd .env.dev yarn run-migrations && env-cmd .env.dev ts-node src/index.ts",
     "debug": "env-cmd .env.dev node --inspect --debug-brk -r ts-node/register src/index.ts",
@@ -67,7 +67,8 @@
     "ignore": [
       "test/*",
       "docs/*",
-      "**/*.test.*"
+      "**/*.test.*",
+      "**/*test-*.*"
     ],
     "delay": "1500",
     "watch": [
