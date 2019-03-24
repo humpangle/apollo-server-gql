@@ -1,11 +1,12 @@
-import { createConnection } from "typeorm";
+import { createConnection, Connection } from "typeorm";
+import Graceful from "node-graceful";
 
-// import { dbConnectionOptions } from "./typeorm.config";
 import { constructServer } from "./apollo-setup";
+import { Server } from "http";
 
 createConnection()
   .then(async connection => {
-    const PORT = process.env.PORT;
+    const PORT = process.env.PORT || "";
 
     const { webServer, GRAPHQL_PATH } = constructServer(
       connection,
@@ -17,5 +18,43 @@ createConnection()
         `Apollo Server is now running on http://127.0.0.1:${PORT}${GRAPHQL_PATH}`
       );
     });
+
+    const shutdownListener = onShutdownListener(webServer, connection, PORT);
+
+    // Graceful.on("exit", shutdownListener, true); // broken. use SIG* instead
+    Graceful.on("SIGTERM", shutdownListener, true);
+    Graceful.on("SIGINT", shutdownListener, true);
+    Graceful.on("SIGBREAK", shutdownListener, true);
+    Graceful.on("SIGHUP", shutdownListener, true);
+    Graceful.on("SIGUSR2", shutdownListener, true); // nodemon
+    Graceful.on("shutdown", shutdownListener, false); // tests
   })
   .catch(error => console.log(error));
+
+function onShutdownListener(
+  server: Server,
+  dbConnection: Connection,
+  port: string
+) {
+  return function(done: () => void, event: any, signal: any) {
+    console.warn(`!)\tGraceful ${signal} signal received.`);
+
+    return new Promise(resolve => {
+      console.warn(`3)\tHTTP & WebSocket servers on port ${port} closing.`);
+      return server.close(resolve);
+    })
+
+      .then(() => {
+        console.warn(`2)\tDatabase connections closing.`);
+        return dbConnection.close();
+      })
+      .then(() => {
+        console.warn(`1)\tShutting down. Goodbye!\n`);
+        return done();
+      })
+      .catch(err => {
+        console.error("!)\tGraceful termination error\n", err);
+        process.exit(1);
+      });
+  };
+}
