@@ -9,7 +9,7 @@ import { importSchema } from "graphql-import";
 import { DocumentNode } from "graphql";
 import cors from "cors";
 import express, { Express as AppExpress } from "express";
-import logger from "morgan";
+import morganLogger from "morgan";
 import { ContextFunction } from "apollo-server-core";
 import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
 import { createServer } from "http";
@@ -44,6 +44,7 @@ export const typeDefsAndResolvers: Pick<
 };
 
 const IS_DEV = process.env.NODE_ENV === "development";
+const IS_TEST = process.env.NODE_ENV === "test";
 
 export type UserGetterFunc = (
   req: AppExpress["request"],
@@ -63,15 +64,6 @@ const defaultContextFn: MakeContext = (
 ) => async args => {
   const { req } = args;
 
-  // tslint:disable-next-line:no-console
-  // console.log(
-  //   "\n\t\tLogging start\n\n\n\n args.connection\n",
-  //   (args as any).connection,
-  //   "\n\nargs.req",
-  //   req,
-  //   "\n\n\n\n\t\tLogging ends\n"
-  // );
-
   return {
     connection,
     secret,
@@ -90,8 +82,8 @@ export function constructServer(
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
-  if (IS_DEV) {
-    app.use(logger("dev"));
+  if (!IS_TEST) {
+    app.use(morganLogger("combined"));
   }
 
   const apolloServer = new ApolloServer({
