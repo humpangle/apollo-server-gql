@@ -4,15 +4,16 @@ import { startTestServer, toGraphQlPromise } from "../test-utils";
 import { constructServer, AUTHORIZATION_HEADER_PREFIX } from "../apollo-setup";
 import {
   CREATE_MESSAGE_MUTATION,
-  LIST_MESSAGES_QUERY
-  // SUBSCRIBE_TO_NEW_MESSAGE
+  LIST_MESSAGES_QUERY,
+  SUBSCRIBE_TO_NEW_MESSAGE
 } from "../contexts/chats/chats-test.utils";
 import {
   CreateMessageMutationArgs,
   MessagesQueryArgs,
   MessageConnection,
   PageInfo,
-  MessageEdge
+  MessageEdge,
+  MessageCreated
 } from "../apollo.generated";
 import { createToken } from "../contexts";
 import { createUser } from "../contexts/accounts";
@@ -37,11 +38,11 @@ afterEach(() => {
 
 describe("Create message mutation", () => {
   it("creates message successfully", async () => {
-    const { user, doQuery } = await setUp();
+    const { user, doQuery, doSubscription } = await setUp();
 
-    // doSubscription({
-    //   query: SUBSCRIBE_TO_NEW_MESSAGE
-    // });
+    const subscription = doSubscription({
+      query: SUBSCRIBE_TO_NEW_MESSAGE
+    });
 
     const variables: CreateMessageMutationArgs = {
       input: {
@@ -71,6 +72,21 @@ describe("Create message mutation", () => {
     ).toBeLessThan(2);
 
     expect(typeof +message.id).toBe("number");
+
+    const {
+      data: {
+        messageCreated: { message: subscriptionResult }
+      }
+    } = (await subscription) as {
+      data: {
+        messageCreated: MessageCreated;
+      };
+    };
+
+    expect(subscriptionResult).toMatchObject({
+      id: message.id,
+      content: message.content
+    } as Message);
   });
 });
 

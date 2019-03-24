@@ -48,10 +48,6 @@ export const SUBSCRIBE_TO_NEW_MESSAGE = gql`
       message {
         id
         content
-
-        user {
-          id
-        }
       }
     }
   }
