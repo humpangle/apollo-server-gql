@@ -2,8 +2,8 @@ import {
   paginate,
   offsetToCursor,
   PAGINATION_ARGS_COMBINATION_ERROR
-} from "./entity";
-import { PageInfo } from "./apollo.generated";
+} from "../entity";
+import { PageInfo } from "../apollo.generated";
 
 describe("paginate test", () => {
   it("throws error if invalid cursor format provided", () => {

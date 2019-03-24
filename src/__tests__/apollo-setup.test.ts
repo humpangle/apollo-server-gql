@@ -4,10 +4,10 @@ import {
   getUserFromRequest,
   INVALID_SESSION_MESSAGE,
   AUTHORIZATION_HEADER_PREFIX
-} from "./apollo-setup";
-import { User, UserObject } from "./entity/user";
-import { createToken } from "./contexts";
-import { USER_CREATION_DATA } from "./contexts/accounts/accounts-test-utils";
+} from "../apollo-setup";
+import { User, UserObject } from "../entity/user";
+import { createToken } from "../contexts";
+import { USER_CREATION_DATA } from "../contexts/accounts/accounts-test-utils";
 
 it("returns user if authorization in request headers", async () => {
   const user = new User(USER_CREATION_DATA);

@@ -11,5 +11,6 @@ module.exports = {
   testPathIgnorePatterns: [
     "<rootDir>/node_modules/",
     "<rootDir>/src/.+?db.test.ts"
-  ]
+  ],
+  testRegex: "src/__tests__/.*"
 };

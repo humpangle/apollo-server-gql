@@ -1,15 +1,15 @@
 import { createConnection, Connection } from "typeorm";
 // import { dbConnectionOptions } from "../../../ormconfig";
-import { createMessage, listMessages } from ".";
+import { createMessage, listMessages } from "../contexts/chats";
 import {
   CreateMessageInput,
   PageInfo,
   ConnectionInput
-} from "../../apollo.generated";
-import { User } from "../../entity/user";
-import { createUser } from "../accounts";
-import { USER_CREATION_DATA } from "../accounts/accounts-test-utils";
-import { insertManyUsers, insertManyMessages } from "../../entity/database";
+} from "../apollo.generated";
+import { User } from "../entity/user";
+import { createUser } from "../contexts/accounts";
+import { USER_CREATION_DATA } from "../contexts/accounts/accounts-test-utils";
+import { insertManyUsers, insertManyMessages } from "../entity/database";
 
 let connection: Connection;
 

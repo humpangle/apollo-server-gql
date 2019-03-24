@@ -1,23 +1,20 @@
 import { Connection, createConnection } from "typeorm";
 import { GraphQLError } from "graphql";
 
-import { constructServer } from "../../apollo-setup";
+import { constructServer } from "../apollo-setup";
 import {
   startTestServer,
   ExecuteGraphqlQueryFn,
   toGraphQlPromise
-} from "../../test-utils";
+} from "../test-utils";
 import {
   CREATE_USER,
   USER_CREATION_DATA,
   LOGIN_USER_MUTATION
-} from "./accounts-test-utils";
-import {
-  CreateUserMutationArgs,
-  LoginMutationArgs
-} from "../../apollo.generated";
-import { User } from "../../entity/user";
-import { createUser, INVALID_LOGIN_INPUT_ERROR } from ".";
+} from "../contexts/accounts/accounts-test-utils";
+import { CreateUserMutationArgs, LoginMutationArgs } from "../apollo.generated";
+import { User } from "../entity/user";
+import { createUser, INVALID_LOGIN_INPUT_ERROR } from "../contexts/accounts";
 
 let connection: Connection;
 let stop: () => void;

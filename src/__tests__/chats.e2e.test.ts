@@ -1,28 +1,25 @@
 import { Connection, createConnection } from "typeorm";
 
-import { startTestServer, toGraphQlPromise } from "../../test-utils";
-import {
-  constructServer,
-  AUTHORIZATION_HEADER_PREFIX
-} from "../../apollo-setup";
+import { startTestServer, toGraphQlPromise } from "../test-utils";
+import { constructServer, AUTHORIZATION_HEADER_PREFIX } from "../apollo-setup";
 import {
   CREATE_MESSAGE_MUTATION,
   LIST_MESSAGES_QUERY
   // SUBSCRIBE_TO_NEW_MESSAGE
-} from "./chats-test.utils";
+} from "../contexts/chats/chats-test.utils";
 import {
   CreateMessageMutationArgs,
   MessagesQueryArgs,
   MessageConnection,
   PageInfo,
   MessageEdge
-} from "../../apollo.generated";
-import { createToken } from "..";
-import { createUser } from "../accounts";
-import { USER_CREATION_DATA } from "../accounts/accounts-test-utils";
-import { Message } from "../../entity/message";
-import { User } from "../../entity/user";
-import { insertManyUsers, insertManyMessages } from "../../entity/database";
+} from "../apollo.generated";
+import { createToken } from "../contexts";
+import { createUser } from "../contexts/accounts";
+import { USER_CREATION_DATA } from "../contexts/accounts/accounts-test-utils";
+import { Message } from "../entity/message";
+import { User } from "../entity/user";
+import { insertManyUsers, insertManyMessages } from "../entity/database";
 
 const secret = "secret";
 let connection: Connection;

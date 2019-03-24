@@ -1,9 +1,9 @@
 import { createConnection, Connection } from "typeorm";
 
 // import { dbConnectionOptions } from "../../../ormconfig";
-import { createUser } from ".";
-import { EMAIL_INVALID_FORMAT_ERROR } from "..";
-import { USER_CREATION_DATA } from "./accounts-test-utils";
+import { createUser } from "../contexts/accounts";
+import { EMAIL_INVALID_FORMAT_ERROR } from "../contexts";
+import { USER_CREATION_DATA } from "../contexts/accounts/accounts-test-utils";
 
 describe("user context", () => {
   let connection: Connection;

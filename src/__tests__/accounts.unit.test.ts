@@ -1,14 +1,18 @@
 import { Connection } from "typeorm";
 
-import { createUser, loginUser, INVALID_LOGIN_INPUT_ERROR } from ".";
-import { EMAIL_INVALID_FORMAT_ERROR } from "..";
-import { User } from "../../entity/user";
-import { USER_CREATION_DATA } from "./accounts-test-utils";
-import { LoginInput } from "../../apollo.generated";
+import {
+  createUser,
+  loginUser,
+  INVALID_LOGIN_INPUT_ERROR
+} from "../contexts/accounts";
+import { EMAIL_INVALID_FORMAT_ERROR } from "../contexts";
+import { User } from "../entity/user";
+import { USER_CREATION_DATA } from "../contexts/accounts/accounts-test-utils";
+import { LoginInput } from "../apollo.generated";
 
-jest.mock("../../entity/database");
+jest.mock("../entity/database");
 
-import { saveUser, getOneUser, verifyHashSync } from "../../entity/database";
+import { saveUser, getOneUser, verifyHashSync } from "../entity/database";
 
 const mockSave = saveUser as jest.Mock;
 const mockGetOneUser = getOneUser as jest.Mock;

@@ -1,24 +1,15 @@
 import { GraphQLError } from "graphql";
 
-import { NOT_AUTHENTICATED_ERROR } from "../../resolvers/resolvers";
+import { NOT_AUTHENTICATED_ERROR } from "../resolvers/resolvers";
 import {
   CreateMessageMutationArgs,
   MessagesQueryArgs
-} from "../../apollo.generated";
+} from "../apollo.generated";
 import {
   CREATE_MESSAGE_MUTATION,
   LIST_MESSAGES_QUERY
-} from "./chats-test.utils";
-import { constructTestServer } from "../../test-utils";
-// import { Message } from "../../entity/message";
-// import { User } from "../../entity/user";
-
-jest.mock(".");
-
-// import { listMessages, cursorToOpaqueString } from ".";
-
-// const mockListMessages = listMessages as jest.Mock;
-// const mockCursorToOpaqueString = cursorToOpaqueString as jest.Mock;
+} from "../contexts/chats/chats-test.utils";
+import { constructTestServer } from "../test-utils";
 
 describe("Create message mutation", () => {
   it("returns error if unauthenticated user", async () => {

@@ -2,21 +2,22 @@ import { GraphQLError } from "graphql";
 import { GraphQLResponse } from "graphql-extensions";
 import { ApolloError } from "apollo-server-core";
 
-import { constructTestServer } from "../../test-utils";
-import {
-  CreateUserMutationArgs,
-  LoginMutationArgs
-} from "../../apollo.generated";
-import { User } from "../../entity/user";
+import { constructTestServer } from "../test-utils";
+import { CreateUserMutationArgs, LoginMutationArgs } from "../apollo.generated";
+import { User } from "../entity/user";
 import {
   CREATE_USER,
   USER_CREATION_DATA,
   LOGIN_USER_MUTATION
-} from "./accounts-test-utils";
+} from "../contexts/accounts/accounts-test-utils";
 
-jest.mock(".");
+jest.mock("../contexts/accounts");
 
-import { createUser, loginUser, INVALID_LOGIN_INPUT_ERROR } from ".";
+import {
+  createUser,
+  loginUser,
+  INVALID_LOGIN_INPUT_ERROR
+} from "../contexts/accounts";
 
 describe("Create user mutations", () => {
   const mockCreateUser = createUser as jest.Mock;
