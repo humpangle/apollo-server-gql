@@ -1,6 +1,10 @@
 import { Connection, createConnection } from "typeorm";
 
-import { startTestServer, toGraphQlPromise } from "../test-utils";
+import {
+  startTestServer,
+  toGraphQlPromise,
+  ExecuteGraphqlSubscriptionFn
+} from "../test-utils";
 import { constructServer, AUTHORIZATION_HEADER_PREFIX } from "../apollo-setup";
 import {
   CREATE_MESSAGE_MUTATION,
@@ -38,9 +42,9 @@ afterEach(() => {
 
 describe("Create message mutation", () => {
   it("creates message successfully", async () => {
-    const { user, doQuery, doSubscription } = await setUp();
+    const { user, doQuery, subscribe } = await setUp();
 
-    const subscription = doSubscription({
+    const subscription = subscribe({
       query: SUBSCRIBE_TO_NEW_MESSAGE
     });
 
@@ -174,10 +178,14 @@ async function setUp() {
           secret
         )}`
       }
-    }
+    },
+
+    { subscription: true }
   );
 
   stopServer = stop;
 
-  return { user, doSubscription, doQuery };
+  const subscribe = doSubscription as ExecuteGraphqlSubscriptionFn;
+
+  return { user, subscribe, doQuery };
 }

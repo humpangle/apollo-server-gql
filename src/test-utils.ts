@@ -41,7 +41,8 @@ export async function startTestServer(
     webServer: Server;
     GRAPHQL_PATH: string;
   },
-  httpOptions: HttpOptions = {}
+  httpOptions: HttpOptions = {},
+  options: { subscription?: boolean } = {}
 ) {
   await webServer.listen(4996);
 
@@ -51,13 +52,25 @@ export async function startTestServer(
     fetch
   });
 
-  const wsClient = new SubscriptionClient(
-    "ws://127.0.0.1:4996" + GRAPHQL_PATH,
-    { reconnect: true },
-    ws
-  );
+  let wsClient: SubscriptionClient;
+  let wsLink: WebSocketLink;
+  let doSubscription: undefined | ExecuteGraphqlSubscriptionFn;
 
-  const wsLink = new WebSocketLink(wsClient);
+  if (options.subscription) {
+    wsClient = new SubscriptionClient(
+      "ws://127.0.0.1:4996" + GRAPHQL_PATH,
+      { reconnect: true },
+      ws
+    );
+
+    wsLink = new WebSocketLink(wsClient);
+
+    doSubscription = function executeGraphqlSubscription<T>(
+      operation: GraphQLRequest
+    ) {
+      return toPromise(execute(wsLink, operation));
+    };
+  }
 
   return {
     link,
@@ -65,7 +78,9 @@ export async function startTestServer(
     stop: () => {
       webServer.close();
 
-      wsClient.close();
+      if (wsClient) {
+        wsClient.close();
+      }
     },
 
     doQuery: function executeOperation(operation: GraphQLRequest) {
@@ -74,19 +89,25 @@ export async function startTestServer(
 
     fetch,
 
-    wsLink,
-
-    doSubscription: function executeGraphqlSubscription<T>(
-      operation: GraphQLRequest
-    ) {
-      return toPromise(execute(wsLink, operation));
-    }
+    doSubscription: doSubscription
   };
 }
 
 export type ExecuteGraphqlQueryFn = (
   params: GraphQLRequest
 ) => Observable<
+  FetchResult<
+    {
+      [key: string]: any;
+    },
+    Record<string, any>,
+    Record<string, any>
+  >
+>;
+
+export type ExecuteGraphqlSubscriptionFn = <T>(
+  operation: GraphQLRequest
+) => Promise<
   FetchResult<
     {
       [key: string]: any;
