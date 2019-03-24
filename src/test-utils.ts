@@ -62,7 +62,11 @@ export async function startTestServer(
   return {
     link,
 
-    stop: () => webServer.close(),
+    stop: () => {
+      webServer.close();
+
+      wsClient.close();
+    },
 
     doQuery: function executeOperation(operation: GraphQLRequest) {
       return execute(link, operation);
