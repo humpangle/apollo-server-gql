@@ -56,7 +56,8 @@ export async function paginate<TEntity>(
       edges.push({
         node: transformDataFn
           ? transformDataFn(rawDbColumnValues)
-          : rawDbColumnValues,
+          : /* istanbul ignore next: do we need to test this branch? */
+            rawDbColumnValues,
         cursor: nextCursor
       });
     }

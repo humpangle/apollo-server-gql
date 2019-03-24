@@ -78,7 +78,7 @@ describe("Create message mutation", () => {
 });
 
 describe("messages query", () => {
-  xit("lists messages", async () => {
+  it("lists messages", async () => {
     const { user: user1, doQuery } = await setUp();
 
     const userId = "" + user1.id;

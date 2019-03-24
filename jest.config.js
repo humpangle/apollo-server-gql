@@ -4,7 +4,8 @@ module.exports = {
   coverageDirectory: "./coverage",
   coveragePathIgnorePatterns: [
     "/node_modules/",
-    "<rootDir>/src/resolvers/interfaces.resolver.ts"
+    "<rootDir>/src/resolvers/interfaces.resolver.ts",
+    "<rootDir>/src/migration/"
   ],
   coverageReporters: ["json", "lcov", "text", "clover"],
   testPathIgnorePatterns: [

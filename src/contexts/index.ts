@@ -23,6 +23,7 @@ export function normalizeDbError(errorString: string) {
     return JSON.stringify({ [fieldName]: errorExplanation });
   }
 
+  /* istanbul ignore next: in case we change to another database or orm */
   return "";
 }
 
