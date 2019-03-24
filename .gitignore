@@ -11,3 +11,4 @@ temp/
 coverage/
 yarn-error.log
 **/*.generated.*
+**/logs/

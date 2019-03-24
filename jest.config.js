@@ -5,7 +5,8 @@ module.exports = {
   coveragePathIgnorePatterns: [
     "/node_modules/",
     "<rootDir>/src/resolvers/interfaces.resolver.ts",
-    "<rootDir>/src/migration/"
+    "<rootDir>/src/migration/",
+    "<rootDir>/src/winston-logger.ts"
   ],
   coverageReporters: ["json", "lcov", "text", "clover"],
   testPathIgnorePatterns: [

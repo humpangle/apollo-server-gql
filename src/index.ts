@@ -1,16 +1,25 @@
-import { createConnection, Connection } from "typeorm";
+import { createConnection, Connection, getConnectionOptions } from "typeorm";
 import Graceful from "node-graceful";
 
 import { constructServer } from "./apollo-setup";
 import { Server } from "http";
+import { TypeORMLogger, logger } from "./winston-logger";
 
-createConnection()
-  .then(async connection => {
+(async function startApplication() {
+  try {
+    const dbConnectionOptions = await getConnectionOptions();
+
+    const connection = await createConnection(
+      Object.assign(dbConnectionOptions, { logger: new TypeORMLogger() })
+    );
+
     const PORT = process.env.PORT || "";
 
     const { webServer, GRAPHQL_PATH } = constructServer(
       connection,
-      process.env.SECRET || ""
+      process.env.SECRET || "",
+      undefined,
+      logger
     );
 
     webServer.listen(PORT, () => {
@@ -28,8 +37,10 @@ createConnection()
     Graceful.on("SIGHUP", shutdownListener, true);
     Graceful.on("SIGUSR2", shutdownListener, true); // nodemon
     Graceful.on("shutdown", shutdownListener, false); // tests
-  })
-  .catch(error => console.log(error));
+  } catch (error) {
+    console.error(error);
+  }
+})();
 
 function onShutdownListener(
   server: Server,

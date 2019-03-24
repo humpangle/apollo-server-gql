@@ -11,6 +11,7 @@ import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
 import { createServer } from "http";
 import jwt from "jsonwebtoken";
 import { AuthenticationError } from "apollo-server-core";
+import { Logger as WinstonLogger } from "winston";
 
 import resolvers from "./resolvers";
 import { UserObject } from "./entity/user";
@@ -70,7 +71,8 @@ const defaultContextFn: MakeContext = (
 export function constructServer(
   connection: Connection,
   secret: string,
-  contextFn: MakeContext = defaultContextFn
+  contextFn: MakeContext = defaultContextFn,
+  logger?: WinstonLogger
 ) {
   const app = express();
   app.use(cors());
@@ -79,7 +81,21 @@ export function constructServer(
 
   /* istanbul ignore next: we don't care about logging in tests */
   if (!IS_TEST) {
-    app.use(morganLogger("combined"));
+    if (logger) {
+      app.use(
+        morganLogger("combined", {
+          stream: {
+            write: function(message) {
+              logger.info(message, {
+                type: "[HTTP]"
+              });
+            }
+          }
+        })
+      );
+    } else {
+      app.use(morganLogger("combined"));
+    }
   }
 
   const apolloServer = new ApolloServer({
