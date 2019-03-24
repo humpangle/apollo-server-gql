@@ -1,10 +1,6 @@
 import { Connection, createConnection } from "typeorm";
 
-import {
-  startTestServer,
-  toGraphQlPromise,
-  ExecuteGraphqlSubscriptionFn
-} from "../test-utils";
+import { startTestServer, ExecuteGraphqlSubscriptionFn } from "../test-utils";
 import { constructServer, AUTHORIZATION_HEADER_PREFIX } from "../apollo-setup";
 import {
   CREATE_MESSAGE_MUTATION,
@@ -54,13 +50,11 @@ describe("Create message mutation", () => {
       }
     };
 
-    const result = await toGraphQlPromise(
-      doQuery({
-        query: CREATE_MESSAGE_MUTATION,
+    const result = await doQuery({
+      query: CREATE_MESSAGE_MUTATION,
 
-        variables
-      })
-    );
+      variables
+    });
 
     const { createMessage: message } = <{ createMessage: Message }>result.data;
 
@@ -126,13 +120,11 @@ describe("messages query", () => {
       }
     };
 
-    const result = await toGraphQlPromise(
-      doQuery({
-        query: LIST_MESSAGES_QUERY,
+    const result = await doQuery({
+      query: LIST_MESSAGES_QUERY,
 
-        variables
-      })
-    );
+      variables
+    });
 
     const {
       messages: { edges, pageInfo }

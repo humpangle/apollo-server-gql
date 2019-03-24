@@ -3,7 +3,6 @@ import { createTestClient } from "apollo-server-testing";
 import { HttpLink } from "apollo-link-http";
 import { execute, toPromise, GraphQLRequest, FetchResult } from "apollo-link";
 import fetch from "node-fetch";
-import Observable from "zen-observable-ts";
 import { HttpOptions } from "apollo-link-http-common";
 import { WebSocketLink } from "apollo-link-ws";
 import { SubscriptionClient } from "subscriptions-transport-ws";
@@ -84,7 +83,7 @@ export async function startTestServer(
     },
 
     doQuery: function executeOperation(operation: GraphQLRequest) {
-      return execute(link, operation);
+      return toPromise(execute(link, operation));
     },
 
     fetch,
@@ -95,7 +94,7 @@ export async function startTestServer(
 
 export type ExecuteGraphqlQueryFn = (
   params: GraphQLRequest
-) => Observable<
+) => Promise<
   FetchResult<
     {
       [key: string]: any;
@@ -116,5 +115,3 @@ export type ExecuteGraphqlSubscriptionFn = <T>(
     Record<string, any>
   >
 >;
-
-export const toGraphQlPromise = toPromise;

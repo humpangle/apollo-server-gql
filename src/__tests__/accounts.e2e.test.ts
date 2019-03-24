@@ -2,11 +2,7 @@ import { Connection, createConnection } from "typeorm";
 import { GraphQLError } from "graphql";
 
 import { constructServer } from "../apollo-setup";
-import {
-  startTestServer,
-  ExecuteGraphqlQueryFn,
-  toGraphQlPromise
-} from "../test-utils";
+import { startTestServer, ExecuteGraphqlQueryFn } from "../test-utils";
 import {
   CREATE_USER,
   USER_CREATION_DATA,
@@ -44,12 +40,10 @@ describe("User mutation", () => {
       input: USER_CREATION_DATA
     };
 
-    const result = await toGraphQlPromise(
-      executeGraphqlQuery({
-        query: CREATE_USER,
-        variables
-      })
-    );
+    const result = await executeGraphqlQuery({
+      query: CREATE_USER,
+      variables
+    });
 
     expect((result.data as { createUser: User }).createUser.jwt).toBeTruthy();
   });
@@ -67,12 +61,10 @@ describe("User mutation", () => {
       input
     };
 
-    const result = await toGraphQlPromise(
-      executeGraphqlQuery({
-        query: CREATE_USER,
-        variables
-      })
-    );
+    const result = await executeGraphqlQuery({
+      query: CREATE_USER,
+      variables
+    });
 
     expect((result.errors as ReadonlyArray<GraphQLError>)[0].message).toMatch(
       JSON.stringify({
@@ -95,12 +87,10 @@ describe("User mutation", () => {
       }
     };
 
-    const result = await toGraphQlPromise(
-      executeGraphqlQuery({
-        query: LOGIN_USER_MUTATION,
-        variables
-      })
-    );
+    const result = await executeGraphqlQuery({
+      query: LOGIN_USER_MUTATION,
+      variables
+    });
 
     const login = (result.data as { login: User }).login;
     expect(login.jwt).toBeTruthy();
@@ -115,12 +105,10 @@ describe("User mutation", () => {
       }
     };
 
-    const result = await toGraphQlPromise(
-      executeGraphqlQuery({
-        query: LOGIN_USER_MUTATION,
-        variables
-      })
-    );
+    const result = await executeGraphqlQuery({
+      query: LOGIN_USER_MUTATION,
+      variables
+    });
 
     expect((result.errors as ReadonlyArray<GraphQLError>)[0].message).toMatch(
       INVALID_LOGIN_INPUT_ERROR
