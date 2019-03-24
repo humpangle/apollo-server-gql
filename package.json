@@ -13,8 +13,8 @@
     "generate": "gql-gen && node gql.generated.edit.js",
     "generate:watch": "chokidar \"./src/graphql/**/*.graphql\" --initial --command \"yarn generate\" ",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
-    "test": "env-cmd .env.test jest --runInBand --watch",
-    "test:coverage": "env-cmd .env.test jest --runInBand --coverage",
+    "test": "env-cmd .env.test jest --detectOpenHandles --runInBand --watch",
+    "test:coverage": "env-cmd .env.test jest --detectOpenHandles --runInBand --coverage",
     "run-migrations": "ts-node node_modules/.bin/typeorm migration:run",
     "make-migration": "env-cmd .env.dev ts-node node_modules/.bin/typeorm migration:generate"
   },
