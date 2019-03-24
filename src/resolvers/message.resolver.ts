@@ -7,8 +7,9 @@ import {
 } from "../apollo.generated";
 import { isAuthenticated } from "./resolvers";
 import { createMessage, listMessages } from "../contexts/chats";
-import { UserObject, User } from "../entity/user";
+import { UserObject } from "../entity/user";
 import { pubsub, PubSubMessage } from "../subscriptions";
+import { getUserById } from "../contexts/accounts";
 
 const createMessageResolver: MutationResolvers.CreateMessageResolver = async function createMessageResolver(
   root,
@@ -65,8 +66,8 @@ export const messageResolver: IResolvers = {
   },
 
   Message: {
-    user: (parent, args, { currentUser }) => {
-      return <User>currentUser;
+    user: (parent, args, { connection }) => {
+      return parent.user || getUserById(connection, parent.userId);
     }
   }
 };

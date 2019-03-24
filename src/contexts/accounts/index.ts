@@ -73,3 +73,10 @@ export async function loginUser(params: LoginInput, connection: Connection) {
 
   return user;
 }
+
+export async function getUserById(
+  connection: Connection,
+  userId: string | number
+) {
+  return await getOneUser(connection, "id = :id", { id: userId });
+}
