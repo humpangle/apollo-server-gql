@@ -4,13 +4,13 @@ const dbConnectionOptions = {
   logging: process.env.NODE_ENV === "development",
   synchronize: process.env.NODE_ENV === "test",
   dropSchema: process.env.NODE_ENV === "test",
-  entities: [__dirname + "/src/entity/**/*.ts"],
-  migrations: [__dirname + "/src/migration/**/*.ts"],
-  subscribers: [__dirname + "/src/subscriber/**/*.ts"],
+  entities: ["src/entity/**/*.ts"],
+  migrations: ["src/migration/**/*.ts"],
+  subscribers: ["src/subscriber/**/*.ts"],
   cli: {
-    entitiesDir: __dirname + "/src/entity",
-    migrationsDir: __dirname + "/src/migration",
-    subscribersDir: __dirname + "/src/subscriber"
+    entitiesDir: "src/entity",
+    migrationsDir: "src/migration",
+    subscribersDir: "src/subscriber"
   }
 };
 

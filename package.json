@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon --exec \"yarn dev\" ",
     "start:debug": "nodemon --exec \"yarn debug\" ",
-    "dev": "env-cmd .env.dev ts-node src/index.ts",
+    "dev": "env-cmd .env.dev yarn run-migrations && env-cmd .env.dev ts-node src/index.ts",
     "debug": "env-cmd .env.dev node --inspect --debug-brk -r ts-node/register src/index.ts",
     "build": "tsc",
     "start:js": "env-cmd .env.dev node dist/index.js",
@@ -14,7 +14,9 @@
     "generate:watch": "chokidar \"./src/graphql/**/*.graphql\" --initial --command \"yarn generate\" ",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
     "test": "env-cmd .env.test jest --runInBand --watch",
-    "test:coverage": "env-cmd .env.test jest --runInBand --coverage"
+    "test:coverage": "env-cmd .env.test jest --runInBand --coverage",
+    "run-migrations": "ts-node node_modules/.bin/typeorm migration:run",
+    "make-migration": "env-cmd .env.dev ts-node node_modules/.bin/typeorm migration:generate"
   },
   "dependencies": {
     "apollo-link": "1.2.11",
