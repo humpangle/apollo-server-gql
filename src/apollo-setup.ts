@@ -1,10 +1,6 @@
 import "reflect-metadata";
 import { Connection } from "typeorm";
-import {
-  PubSub,
-  ApolloServerExpressConfig,
-  ApolloServer
-} from "apollo-server-express";
+import { ApolloServerExpressConfig, ApolloServer } from "apollo-server-express";
 import { importSchema } from "graphql-import";
 import { DocumentNode } from "graphql";
 import cors from "cors";
@@ -21,7 +17,6 @@ import { UserObject } from "./entity/user";
 
 export interface OurContext {
   connection: Connection;
-  pubSub: PubSub;
   secret: string;
   currentUser?: UserObject | null;
 }
@@ -29,7 +24,7 @@ export interface OurContext {
 export enum PubSubMessage {
   userAdded = "userAdded",
 
-  messageCreated = "messageCreated"
+  messageCreated = "MESSAGE_CREATED"
 }
 
 export const typeDefsAndResolvers: Pick<
@@ -59,6 +54,7 @@ export type MakeContext = (
 
 const defaultContextFn: MakeContext = (
   connection,
+  /* istanbul ignore next: we will always provide the secret from env variables */
   secret = "",
   userGetterFunc = getUserFromRequest
 ) => async args => {
@@ -67,7 +63,6 @@ const defaultContextFn: MakeContext = (
   return {
     connection,
     secret,
-    pubSub: new PubSub(),
     currentUser: await userGetterFunc(req, secret)
   };
 };
@@ -82,6 +77,7 @@ export function constructServer(
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
+  /* istanbul ignore next: we don't care about logging in tests */
   if (!IS_TEST) {
     app.use(morganLogger("combined"));
   }
@@ -131,27 +127,33 @@ export async function getUserFromRequest(
   req: AppExpress["request"],
   secret: string
 ): Promise<UserObject | null> {
+  let token = "";
+  let prefix = "";
+
   /**
-   * in the case of subscription, Express.request is undefined
+   * Simply return null in case of any problems
    */
-  if (!req) {
+  try {
+    const {
+      headers: { authorization }
+    } = req;
+
+    if (!authorization) {
+      return null;
+    }
+
+    [prefix, token] = authorization.split(" ");
+
+    if (prefix !== AUTHORIZATION_HEADER_PREFIX || !token) {
+      return null;
+    }
+  } catch (error) {
     return null;
   }
 
-  const {
-    headers: { authorization }
-  } = req;
-
-  if (!authorization) {
-    return null;
-  }
-
-  const [prefix, token] = authorization.split(" ");
-
-  if (prefix !== AUTHORIZATION_HEADER_PREFIX || !token) {
-    throw new AuthenticationError(INVALID_SESSION_MESSAGE);
-  }
-
+  /**
+   * We will always assume session has expired if any problem arises here
+   */
   try {
     return await (jwt.verify(token, secret) as UserObject);
   } catch (error) {

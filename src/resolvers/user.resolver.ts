@@ -1,18 +1,18 @@
 import { IResolvers } from "../apollo.generated";
 import { createUser, loginUser } from "../contexts/accounts";
 import { createToken } from "../contexts";
-import { PubSubMessage } from "../apollo-setup";
+import { pubsub, PubSubMessage } from "../subscriptions";
 
 export const userResolver = {
   Query: {},
 
   Mutation: {
     createUser: async (parent, { input: args }, context) => {
-      const { pubSub, connection } = context;
+      const { connection } = context;
 
       const user = await createUser(args, connection);
 
-      pubSub.publish(PubSubMessage.userAdded, {
+      pubsub.publish(PubSubMessage.userAdded, {
         [PubSubMessage.userAdded]: user
       });
 

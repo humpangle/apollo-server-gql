@@ -8,29 +8,20 @@ import {
 import { isAuthenticated } from "./resolvers";
 import { createMessage, listMessages } from "../contexts/chats";
 import { UserObject, User } from "../entity/user";
-import { PubSubMessage } from "../apollo-setup";
+import { pubsub, PubSubMessage } from "../subscriptions";
 
 const createMessageResolver: MutationResolvers.CreateMessageResolver = async function createMessageResolver(
   root,
   { input },
-  { connection, currentUser, pubSub }
+  { connection, currentUser }
 ) {
   const message = await createMessage(input, connection, <UserObject>(
     currentUser
   ));
 
-  const subscriptionMessage = {
-    [PubSubMessage.messageCreated]: { message }
-  };
-
-  // tslint:disable-next-line:no-console
-  console.log(
-    "\n\t\tLogging start\n\n\n\n subscriptionMessage\n",
-    subscriptionMessage,
-    "\n\n\n\n\t\tLogging ends\n"
-  );
-
-  // pubSub.publish(PubSubMessage.messageCreated, subscriptionMessage);
+  pubsub.publish(PubSubMessage.messageCreated, {
+    messageCreated: { message }
+  });
 
   return message;
 };
@@ -67,8 +58,8 @@ export const messageResolver: IResolvers = {
 
   Subscription: {
     messageCreated: {
-      subscribe: (parent, args, { pubSub }) => {
-        return pubSub.asyncIterator(PubSubMessage.messageCreated);
+      subscribe: (parent, args, {}) => {
+        return pubsub.asyncIterator(PubSubMessage.messageCreated);
       }
     }
   },
