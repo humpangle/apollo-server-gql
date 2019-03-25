@@ -17,7 +17,7 @@
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
     "test": "env-cmd .env.test jest --runInBand --watch",
     "test:coverage": "env-cmd .env.test jest --runInBand --coverage",
-    "run-migrations": "ts-node node_modules/.bin/typeorm migration:run",
+    "run-migrations": "yarn typeorm migration:run",
     "make-migration": "env-cmd .env.dev ts-node node_modules/.bin/typeorm migration:generate"
   },
   "dependencies": {
