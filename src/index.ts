@@ -18,7 +18,6 @@ import { TypeORMLogger, logger } from "./winston-logger";
     const { webServer, GRAPHQL_PATH } = constructServer(
       connection,
       process.env.SECRET || "",
-      undefined,
       logger
     );
 

@@ -6,7 +6,6 @@ import { DocumentNode } from "graphql";
 import cors from "cors";
 import express from "express";
 import morganLogger from "morgan";
-import { ContextFunction } from "apollo-server-core";
 import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
 import { createServer } from "http";
 import jwt from "jsonwebtoken";
@@ -47,59 +46,9 @@ type WithAuthorization<T = {}> = T & {
   connection: { Authorization?: string; context?: OurContext };
 };
 
-export type UserGetterFunc = (
-  connection: Connection,
-  secret: string,
-  authorization?: string
-) => Promise<User | null>;
-
-export type MakeContext = (
-  connection: Connection,
-  secret?: string | undefined,
-  userGetterFunc?: UserGetterFunc | undefined
-) => ContextFunction<WithAuthorization<ExpressContext>, OurContext>;
-
-const defaultContextFn: MakeContext = (
-  connection,
-  /* istanbul ignore next: we will always provide the secret from env variables */
-  secret = "",
-  userGetterFunc = getUserFromRequest
-) => async args => {
-  let currentUser: null | User = null;
-
-  /**
-   * from normal HTTP client
-   */
-  if (args.req) {
-    currentUser = await userGetterFunc(
-      connection,
-      secret,
-      args.req.headers.authorization
-    );
-    /**
-     * from websocket client
-     */
-  } else if (args.connection) {
-    const { context, Authorization } = args.connection;
-
-    if (context && context.currentUser) {
-      return context;
-    }
-
-    currentUser = await userGetterFunc(connection, secret, Authorization);
-  }
-
-  return {
-    connection,
-    secret,
-    currentUser
-  };
-};
-
 export function constructServer(
   connection: Connection,
   secret: string,
-  contextFn: MakeContext = defaultContextFn,
   logger?: WinstonLogger
 ) {
   const app = express();
@@ -133,7 +82,46 @@ export function constructServer(
 
     playground: IS_DEV,
 
-    context: contextFn(connection, secret),
+    context: async function createContext(
+      args: WithAuthorization<ExpressContext>
+    ) {
+      {
+        let currentUser: null | User = null;
+
+        /**
+         * from normal HTTP client
+         */
+        if (args.req) {
+          currentUser = await getUserFromRequest(
+            connection,
+            secret,
+            args.req.headers.authorization
+          );
+
+          /**
+           * from websocket client
+           */
+        } else if (args.connection) {
+          const { context, Authorization } = args.connection;
+
+          if (context && context.currentUser) {
+            return context;
+          }
+
+          currentUser = await getUserFromRequest(
+            connection,
+            secret,
+            Authorization
+          );
+        }
+
+        return {
+          connection,
+          secret,
+          currentUser
+        };
+      }
+    },
 
     subscriptions: {
       onConnect: async function onConnect(connectionParameters: {
@@ -169,7 +157,7 @@ export function constructServer(
   /**
    * We do not start the server here because in development and production,
    * we start the server automatically whereas in test, we start the server
-   * manually. 1
+   * manually.
    */
 
   return {
@@ -212,6 +200,7 @@ export async function getUserFromRequest(
    */
   try {
     const { id: userId } = (await jwt.verify(token, secret)) as { id: string };
+
     return (await getUserById(connection, userId)) || null;
   } catch (error) {
     throw new AuthenticationError(INVALID_SESSION_MESSAGE);
