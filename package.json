@@ -4,12 +4,14 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "start": "yarn typeorm migration:run && node build/index.js",
     "start:dev": "nodemon --verbose --exec \"yarn dev\" ",
     "start:debug": "nodemon --exec \"yarn debug\" ",
+    "start:staging": "yarn build && env-cmd .env.staging yarn typeorm migration:run && env-cmd .env.staging node build/index.js",
     "dev": "env-cmd .env.dev yarn run-migrations && env-cmd .env.dev ts-node src/index.ts",
     "debug": "env-cmd .env.dev node --inspect --debug-brk -r ts-node/register src/index.ts",
-    "build": "tsc",
-    "start:js": "env-cmd .env.dev node dist/index.js",
+    "build": "tsc && node copy-assets.js",
+    "prebuild": "rimraf build",
     "generate": "gql-gen && node gql.generated.edit.js",
     "generate:watch": "chokidar \"./src/graphql/**/*.graphql\" --initial --command \"yarn generate\" ",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
@@ -39,6 +41,7 @@
     "pg": "7.8.2",
     "reflect-metadata": "0.1.13",
     "subscriptions-transport-ws": "0.9.16",
+    "tslib": "1.9.3",
     "typeorm": "0.2.15",
     "winston": "3.2.1",
     "ws": "6.2.0"
@@ -60,6 +63,8 @@
     "graphql-codegen-typescript-server": "0.18.0",
     "jest": "24.5.0",
     "nodemon": "1.18.10",
+    "rimraf": "2.6.3",
+    "shelljs": "0.8.3",
     "ts-jest": "24.0.0",
     "ts-node": "8.0.3",
     "typescript": "3.3.3333"

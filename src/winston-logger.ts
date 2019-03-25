@@ -7,8 +7,14 @@ import { Format } from "logform";
 const NODE_ENV = process.env.NODE_ENV;
 
 let logLevel = "debug";
-let winstonTransports: Transport[] = [];
-let format: Format = winstonFormat.combine(winstonFormat.timestamp());
+
+let format: Format = winstonFormat.combine(
+  /**
+   * does not work outside development if I don't provide json
+   */
+  winstonFormat.json(),
+  winstonFormat.timestamp()
+);
 
 const fileTransport = new transports.File({
   maxFiles: 5,
@@ -18,21 +24,23 @@ const fileTransport = new transports.File({
   filename: (process.env.NODE_ENV || "development") + ".log"
 });
 
-const consoleTransport = new transports.Console({
-  level: "debug",
-  handleExceptions: true
-});
+const winstonTransports: Transport[] = [fileTransport];
 
 if (NODE_ENV === "development") {
-  winstonTransports = [fileTransport, consoleTransport];
+  winstonTransports.push(
+    new transports.Console({
+      level: "debug",
+      handleExceptions: true
+    })
+  );
 
   format = winstonFormat.combine(
+    winstonFormat.json(),
     winstonFormat.timestamp(),
-    winstonFormat.prettyPrint()
+    winstonFormat.prettyPrint(),
+    winstonFormat.colorize()
   );
-} else if (NODE_ENV === "production") {
-  winstonTransports = [fileTransport];
-
+} else {
   logLevel = "info";
 }
 
@@ -48,7 +56,7 @@ export const logger = createLogger({
 
 export class TypeORMLogger implements ITypeORMLogger {
   private static winstonLogger = createLogger({
-    level: "verbose",
+    level: "info",
 
     exitOnError: false,
 
@@ -58,7 +66,7 @@ export class TypeORMLogger implements ITypeORMLogger {
   });
 
   public logQuery(query: string, parameters?: any[] | undefined) {
-    TypeORMLogger.winstonLogger.verbose(this.prefix("Query"), {
+    TypeORMLogger.winstonLogger.info(this.prefix("Query"), {
       query,
       parameters
     });
@@ -88,19 +96,19 @@ export class TypeORMLogger implements ITypeORMLogger {
   }
 
   public logSchemaBuild(message: string) {
-    TypeORMLogger.winstonLogger.verbose(this.prefix("Schema Build"), {
+    TypeORMLogger.winstonLogger.info(this.prefix("Schema Build"), {
       message
     });
   }
 
   public logMigration(message: string) {
-    TypeORMLogger.winstonLogger.verbose(this.prefix("Migration"), {
+    TypeORMLogger.winstonLogger.info(this.prefix("Migration"), {
       message
     });
   }
 
   public log(level: "log" | "info" | "warn", message: any) {
-    TypeORMLogger.winstonLogger.verbose(this.prefix(level), {
+    TypeORMLogger.winstonLogger.info(this.prefix(level), {
       message
     });
   }

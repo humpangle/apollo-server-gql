@@ -56,7 +56,7 @@ export async function startTestServer(
   const link = new HttpLink({
     ...httpOptions,
     uri: `http://127.0.0.1:${port}` + GRAPHQL_PATH,
-    fetch
+    fetch: fetch as any
   });
 
   let wsClient: SubscriptionClient;
