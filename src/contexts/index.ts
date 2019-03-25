@@ -1,4 +1,3 @@
-import { User, toUserObjectLiteral } from "../entity/user";
 import jwt from "jsonwebtoken";
 
 /**
@@ -28,9 +27,9 @@ export function normalizeDbError(errorString: string) {
 }
 
 export async function createToken(
-  user: User,
+  id: string | number,
   secret: string,
   expiresIn: string = "30min"
 ) {
-  return await jwt.sign(toUserObjectLiteral(user), secret, { expiresIn });
+  return await jwt.sign({ id: "" + id }, secret, { expiresIn });
 }

@@ -32,7 +32,7 @@ export const userResolver = {
     jwt: (user, args, context) => {
       const { secret } = context;
 
-      return createToken(user, secret);
+      return createToken(user.id, secret);
     }
   }
 } as IResolvers;

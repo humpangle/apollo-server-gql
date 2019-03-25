@@ -79,23 +79,3 @@ export class User {
     });
   }
 }
-
-export interface UserObject {
-  id: number;
-  username: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-}
-
-export function toUserObjectLiteral(
-  user: User
-): { [k in keyof UserObject]: User[k] } {
-  return {
-    id: user.id,
-    username: user.username,
-    email: user.email,
-    firstName: user.firstName,
-    lastName: user.lastName
-  };
-}

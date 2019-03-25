@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { MinLength } from "class-validator";
 
-import { User, UserObject } from "./user";
+import { User } from "./user";
 import { RelayNode } from ".";
 
 @Entity({
@@ -62,7 +62,7 @@ export class Message implements RelayNode {
 }
 
 export interface MessageConstructorArgs {
-  user?: User | UserObject;
+  user?: User;
 
   content?: string;
 

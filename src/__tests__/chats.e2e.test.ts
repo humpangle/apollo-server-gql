@@ -166,7 +166,7 @@ async function setUp() {
     {
       headers: {
         Authorization: `${AUTHORIZATION_HEADER_PREFIX} ${await createToken(
-          user,
+          user.id,
           secret
         )}`
       }

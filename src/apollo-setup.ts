@@ -14,12 +14,13 @@ import { AuthenticationError } from "apollo-server-core";
 import { Logger as WinstonLogger } from "winston";
 
 import resolvers from "./resolvers";
-import { UserObject } from "./entity/user";
+import { User } from "./entity/user";
+import { getUserById } from "./contexts/accounts";
 
 export interface OurContext {
   connection: Connection;
   secret: string;
-  currentUser?: UserObject | null;
+  currentUser?: User | null;
 }
 
 export enum PubSubMessage {
@@ -43,9 +44,10 @@ const IS_DEV = process.env.NODE_ENV === "development";
 const IS_TEST = process.env.NODE_ENV === "test";
 
 export type UserGetterFunc = (
+  connection: Connection,
   req: AppExpress["request"],
   secret: string
-) => Promise<UserObject | null>;
+) => Promise<User | null>;
 
 export type MakeContext = (
   connection: Connection,
@@ -64,7 +66,7 @@ const defaultContextFn: MakeContext = (
   return {
     connection,
     secret,
-    currentUser: await userGetterFunc(req, secret)
+    currentUser: await userGetterFunc(connection, req, secret)
   };
 };
 
@@ -140,9 +142,10 @@ export const INVALID_SESSION_MESSAGE =
 export const AUTHORIZATION_HEADER_PREFIX = "Bearer";
 
 export async function getUserFromRequest(
+  connection: Connection,
   req: AppExpress["request"],
   secret: string
-): Promise<UserObject | null> {
+): Promise<User | null> {
   let token = "";
   let prefix = "";
 
@@ -171,7 +174,8 @@ export async function getUserFromRequest(
    * We will always assume session has expired if any problem arises here
    */
   try {
-    return await (jwt.verify(token, secret) as UserObject);
+    const { id: userId } = (await jwt.verify(token, secret)) as { id: string };
+    return (await getUserById(connection, userId)) || null;
   } catch (error) {
     throw new AuthenticationError(INVALID_SESSION_MESSAGE);
   }

@@ -1,20 +1,28 @@
 import { Express as AppExpress } from "express";
+import { Connection } from "typeorm";
+
+import { createToken } from "../contexts";
+
+jest.mock("../contexts/accounts");
 
 import {
   getUserFromRequest,
   INVALID_SESSION_MESSAGE,
   AUTHORIZATION_HEADER_PREFIX
 } from "../apollo-setup";
-import { User, UserObject } from "../entity/user";
-import { createToken } from "../contexts";
-import { USER_CREATION_DATA } from "../contexts/accounts/accounts-test-utils";
+import { getUserById } from "../contexts/accounts";
+
+const mockGetUserById = getUserById as jest.Mock;
+let connection: Connection;
 
 it("returns user if authorization in request headers", async () => {
-  const user = new User(USER_CREATION_DATA);
+  const user = { id: 55 };
+
+  mockGetUserById.mockResolvedValue(user);
 
   const secret = "secret";
 
-  const token = await createToken(user, secret);
+  const token = await createToken(user.id, secret);
 
   const req = {
     headers: {
@@ -22,15 +30,10 @@ it("returns user if authorization in request headers", async () => {
     }
   } as AppExpress["request"];
 
-  return getUserFromRequest(req, secret).then(result => {
-    const userFromToken = result as (UserObject & { exp: number; iat: number });
+  expect.assertions(1);
 
-    const data = { ...USER_CREATION_DATA };
-    delete data.password;
-    delete userFromToken.exp;
-    delete userFromToken.iat;
-
-    expect(result).toEqual(data);
+  return getUserFromRequest(connection, req, secret).then(result => {
+    expect(result).toEqual(user);
   });
 });
 
@@ -41,12 +44,14 @@ it("returns null if authorization not in request headers", () => {
     headers: {}
   } as AppExpress["request"];
 
-  return getUserFromRequest(req, secret).then(result => {
+  expect.assertions(1);
+
+  return getUserFromRequest(connection, req, secret).then(result => {
     expect(result).toBeNull();
   });
 });
 
-it("throws expired session error if request.headers.authorization not in correct format", () => {
+it("returns null if request.headers.authorization not in correct format", () => {
   const secret = "secret";
 
   const req = {
@@ -55,8 +60,10 @@ it("throws expired session error if request.headers.authorization not in correct
     }
   } as AppExpress["request"];
 
-  return getUserFromRequest(req, secret).catch(error => {
-    expect(error.message).toMatch(INVALID_SESSION_MESSAGE);
+  expect.assertions(1);
+
+  return getUserFromRequest(connection, req, secret).then(result => {
+    expect(result).toBeNull();
   });
 });
 
@@ -69,12 +76,14 @@ it("throws expired session error if token is invalid", () => {
     }
   } as AppExpress["request"];
 
-  return getUserFromRequest(req, secret).catch(error => {
+  expect.assertions(1);
+
+  return getUserFromRequest(connection, req, secret).catch(error => {
     expect(error.message).toMatch(INVALID_SESSION_MESSAGE);
   });
 });
 
-it("throws expired session error if no token preset in headers", () => {
+it("returns null if no token present in authorization.headers", () => {
   const secret = "secret";
 
   const req = {
@@ -83,7 +92,9 @@ it("throws expired session error if no token preset in headers", () => {
     }
   } as AppExpress["request"];
 
-  return getUserFromRequest(req, secret).catch(error => {
-    expect(error.message).toMatch(INVALID_SESSION_MESSAGE);
+  expect.assertions(1);
+
+  return getUserFromRequest(connection, req, secret).then(result => {
+    expect(result).toBeNull();
   });
 });

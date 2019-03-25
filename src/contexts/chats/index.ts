@@ -1,7 +1,7 @@
 import { Connection } from "typeorm";
 
 import { CreateMessageInput, ConnectionInput } from "../../apollo.generated";
-import { User, UserObject } from "../../entity/user";
+import { User } from "../../entity/user";
 import {
   Message,
   MESSAGE_RAW_PRIMARY_COLUMNS,
@@ -19,7 +19,7 @@ import { paginate } from "../../entity";
 export async function createMessage(
   params: CreateMessageInput,
   connection: Connection,
-  user: User | UserObject
+  user: User
 ) {
   const message = new Message({
     ...params,
