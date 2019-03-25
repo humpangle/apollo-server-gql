@@ -10,6 +10,7 @@ import ws from "ws";
 
 import { OurContext, typeDefsAndResolvers } from "./apollo-setup";
 import { Server } from "http";
+import { AddressInfo } from "net";
 
 interface ConstructTestServerArgs {
   context?: Partial<OurContext>;
@@ -43,11 +44,18 @@ export async function startTestServer(
   httpOptions: HttpOptions = {},
   options: { subscription?: boolean } = {}
 ) {
-  await webServer.listen(4996);
+  /**
+   * 0 argument means use random port. In case we run tests in parallel, we
+   * don't want to hard code a port. We let the server choose any available
+   * port.
+   */
+  const server = await webServer.listen(0);
+
+  const { port } = server.address() as AddressInfo;
 
   const link = new HttpLink({
     ...httpOptions,
-    uri: "http://127.0.0.1:4996" + GRAPHQL_PATH,
+    uri: `http://127.0.0.1:${port}` + GRAPHQL_PATH,
     fetch
   });
 
@@ -57,7 +65,7 @@ export async function startTestServer(
 
   if (options.subscription) {
     wsClient = new SubscriptionClient(
-      "ws://127.0.0.1:4996" + GRAPHQL_PATH,
+      `ws://127.0.0.1:${port}` + GRAPHQL_PATH,
       { reconnect: true },
       ws
     );
