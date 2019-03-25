@@ -57,14 +57,16 @@ export const messageResolver: IResolvers = {
 
   Subscription: {
     messageCreated: {
-      subscribe: (parent, args, {}) => {
+      subscribe: (parent, args, context) => {
         return pubsub.asyncIterator(PubSubMessage.messageCreated);
       }
     }
   },
 
   Message: {
-    user: (parent, args, { connection }) => {
+    user: (parent, args, context) => {
+      const { connection } = context;
+
       return parent.user || getUserById(connection, parent.userId);
     }
   }

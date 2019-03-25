@@ -4,7 +4,7 @@ import { ApolloServerExpressConfig, ApolloServer } from "apollo-server-express";
 import { importSchema } from "graphql-import";
 import { DocumentNode } from "graphql";
 import cors from "cors";
-import express, { Express as AppExpress } from "express";
+import express from "express";
 import morganLogger from "morgan";
 import { ContextFunction } from "apollo-server-core";
 import { ExpressContext } from "apollo-server-express/dist/ApolloServer";
@@ -43,17 +43,21 @@ export const typeDefsAndResolvers: Pick<
 const IS_DEV = process.env.NODE_ENV === "development";
 const IS_TEST = process.env.NODE_ENV === "test";
 
+type WithAuthorization<T = {}> = T & {
+  connection: { Authorization?: string; context?: OurContext };
+};
+
 export type UserGetterFunc = (
   connection: Connection,
-  req: AppExpress["request"],
-  secret: string
+  secret: string,
+  authorization?: string
 ) => Promise<User | null>;
 
 export type MakeContext = (
   connection: Connection,
   secret?: string | undefined,
   userGetterFunc?: UserGetterFunc | undefined
-) => ContextFunction<ExpressContext, OurContext>;
+) => ContextFunction<WithAuthorization<ExpressContext>, OurContext>;
 
 const defaultContextFn: MakeContext = (
   connection,
@@ -61,12 +65,34 @@ const defaultContextFn: MakeContext = (
   secret = "",
   userGetterFunc = getUserFromRequest
 ) => async args => {
-  const { req } = args;
+  let currentUser: null | User = null;
+
+  /**
+   * from normal HTTP client
+   */
+  if (args.req) {
+    currentUser = await userGetterFunc(
+      connection,
+      secret,
+      args.req.headers.authorization
+    );
+    /**
+     * from websocket client
+     */
+  } else if (args.connection) {
+    const { context, Authorization } = args.connection;
+
+    if (context && context.currentUser) {
+      return context;
+    }
+
+    currentUser = await userGetterFunc(connection, secret, Authorization);
+  }
 
   return {
     connection,
     secret,
-    currentUser: await userGetterFunc(connection, req, secret)
+    currentUser
   };
 };
 
@@ -107,7 +133,25 @@ export function constructServer(
 
     playground: IS_DEV,
 
-    context: contextFn(connection, secret)
+    context: contextFn(connection, secret),
+
+    subscriptions: {
+      onConnect: async function onConnect(connectionParameters: {
+        Authorization?: string;
+      }) {
+        const currentUser = await getUserFromRequest(
+          connection,
+          secret,
+          connectionParameters.Authorization
+        );
+
+        return {
+          connection,
+          secret,
+          currentUser
+        };
+      }
+    }
   });
 
   const GRAPHQL_PATH = "/graphql";
@@ -143,8 +187,8 @@ export const AUTHORIZATION_HEADER_PREFIX = "Bearer";
 
 export async function getUserFromRequest(
   connection: Connection,
-  req: AppExpress["request"],
-  secret: string
+  secret: string,
+  authorization: string = ""
 ): Promise<User | null> {
   let token = "";
   let prefix = "";
@@ -152,21 +196,14 @@ export async function getUserFromRequest(
   /**
    * Simply return null in case of any problems
    */
-  try {
-    const {
-      headers: { authorization }
-    } = req;
 
-    if (!authorization) {
-      return null;
-    }
+  if (!authorization) {
+    return null;
+  }
 
-    [prefix, token] = authorization.split(" ");
+  [prefix, token] = authorization.split(" ");
 
-    if (prefix !== AUTHORIZATION_HEADER_PREFIX || !token) {
-      return null;
-    }
-  } catch (error) {
+  if (prefix !== AUTHORIZATION_HEADER_PREFIX || !token) {
     return null;
   }
 
