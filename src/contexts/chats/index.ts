@@ -10,7 +10,9 @@ import {
 import {
   saveMessage,
   validateAssociates,
-  getMessages
+  getMessages,
+  getOneMessage,
+  deleteMessageById
 } from "../../entity/database";
 import { validate } from "class-validator";
 import { formatValidationErrors } from "../../entity/validators";
@@ -76,3 +78,12 @@ export async function listMessages(
     args
   );
 }
+
+export function getMessageById(
+  connection: Connection,
+  messageId: string | number
+) {
+  return getOneMessage(connection, "id = :id", { id: messageId });
+}
+
+export const deleteMessage = deleteMessageById;

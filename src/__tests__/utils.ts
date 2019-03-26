@@ -98,7 +98,7 @@ export async function startTestServer(
 
     fetch,
 
-    doSubscription: doSubscription
+    doSubscription
   };
 }
 
@@ -204,5 +204,11 @@ export const SUBSCRIBE_TO_NEW_MESSAGE = gql`
         }
       }
     }
+  }
+`;
+
+export const DELETE_MESSAGE_MUTATION = gql`
+  mutation DeleteMessage($id: ID!) {
+    deleteMessage(id: $id)
   }
 `;

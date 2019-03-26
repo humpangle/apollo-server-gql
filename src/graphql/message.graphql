@@ -21,6 +21,8 @@ type Query {
 
 type Mutation {
   createMessage(input: CreateMessageInput!): Message!
+
+  deleteMessage(id: ID!): Boolean!
 }
 
 type MessageConnection implements Connection {

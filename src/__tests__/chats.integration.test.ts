@@ -1,17 +1,30 @@
 import { GraphQLError } from "graphql";
 
-import { NOT_AUTHENTICATED_ERROR } from "../resolvers/resolvers";
+import {
+  NOT_AUTHENTICATED_AS_USER_ERROR,
+  NOT_AUTHENTICATED_AS_OWNER_ERROR,
+  MESSAGE_NOT_FOUND_ERROR
+} from "../resolvers/resolvers";
 import {
   CreateMessageMutationArgs,
-  MessagesQueryArgs
+  MessagesQueryArgs,
+  DeleteMessageMutationArgs
 } from "../apollo.generated";
 import {
   constructTestServer,
   CREATE_MESSAGE_MUTATION,
-  LIST_MESSAGES_QUERY
+  LIST_MESSAGES_QUERY,
+  DELETE_MESSAGE_MUTATION
 } from "./utils";
+import { OurContext } from "../apollo-setup";
 
-describe("Create message mutation", () => {
+jest.mock("../entity/database");
+
+import { getOneMessage } from "../entity/database";
+
+const mockGetOneMessage = getOneMessage as jest.Mock;
+
+describe("Message mutation", () => {
   it("returns error if unauthenticated user", async () => {
     const variables: CreateMessageMutationArgs = {
       input: {
@@ -25,10 +38,61 @@ describe("Create message mutation", () => {
       query: CREATE_MESSAGE_MUTATION,
 
       variables
+      // tslint:disable-next-line: no-any
     } as any);
 
     expect((result.errors as ReadonlyArray<GraphQLError>)[0].message).toMatch(
-      NOT_AUTHENTICATED_ERROR
+      NOT_AUTHENTICATED_AS_USER_ERROR
+    );
+  });
+
+  it("returns error if non message owner tries to delete message", async () => {
+    mockGetOneMessage.mockResolvedValue({
+      id: 5
+    });
+
+    const context = {
+      currentUser: {}
+    } as OurContext;
+
+    const { mutate } = constructTestServer({ context });
+
+    const variables: DeleteMessageMutationArgs = {
+      id: "1"
+    };
+
+    const result = await mutate({
+      query: DELETE_MESSAGE_MUTATION,
+      variables
+      // tslint:disable-next-line: no-any
+    } as any);
+
+    expect((result.errors as ReadonlyArray<GraphQLError>)[0].message).toMatch(
+      NOT_AUTHENTICATED_AS_OWNER_ERROR
+    );
+  });
+
+  it("returns error if message to be deleted is not found", async () => {
+    mockGetOneMessage.mockResolvedValue(null);
+
+    const context = {
+      currentUser: {}
+    } as OurContext;
+
+    const { mutate } = constructTestServer({ context });
+
+    const variables: DeleteMessageMutationArgs = {
+      id: "1"
+    };
+
+    const result = await mutate({
+      query: DELETE_MESSAGE_MUTATION,
+      variables
+      // tslint:disable-next-line: no-any
+    } as any);
+
+    expect((result.errors as ReadonlyArray<GraphQLError>)[0].message).toMatch(
+      MESSAGE_NOT_FOUND_ERROR
     );
   });
 });
@@ -44,10 +108,11 @@ describe("list messages query", () => {
     const result = await mutate({
       query: LIST_MESSAGES_QUERY,
       variables
+      // tslint:disable-next-line: no-any
     } as any);
 
     expect((result.errors as ReadonlyArray<GraphQLError>)[0].message).toMatch(
-      NOT_AUTHENTICATED_ERROR
+      NOT_AUTHENTICATED_AS_USER_ERROR
     );
   });
 });

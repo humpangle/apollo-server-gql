@@ -6,7 +6,8 @@ import {
   CREATE_MESSAGE_MUTATION,
   LIST_MESSAGES_QUERY,
   SUBSCRIBE_TO_NEW_MESSAGE,
-  USER_CREATION_DATA
+  USER_CREATION_DATA,
+  DELETE_MESSAGE_MUTATION
 } from "./utils";
 import { constructServer, AUTHORIZATION_HEADER_PREFIX } from "../apollo-setup";
 import {
@@ -15,7 +16,8 @@ import {
   MessageConnection,
   PageInfo,
   MessageEdge,
-  MessageCreated
+  MessageCreated,
+  DeleteMessageMutationArgs
 } from "../apollo.generated";
 import { createToken } from "../contexts";
 import { createUser } from "../contexts/accounts";
@@ -37,9 +39,9 @@ afterEach(() => {
   }
 });
 
-describe("Create message mutation", () => {
+describe("Message mutation", () => {
   it("creates message successfully", async () => {
-    const { user, doQuery, subscribe } = await setUp();
+    const { user, doQuery, subscribe } = await setUp({ subscription: true });
 
     const subscription = subscribe({
       query: SUBSCRIBE_TO_NEW_MESSAGE
@@ -57,7 +59,9 @@ describe("Create message mutation", () => {
       variables
     });
 
-    const { createMessage: message } = <{ createMessage: Message }>result.data;
+    const { createMessage: message } = result.data as {
+      createMessage: Message;
+    };
 
     expect(+message.user.id).toBe(user.id);
     expect(message.content).toBe("yes");
@@ -86,6 +90,31 @@ describe("Create message mutation", () => {
       id: message.id,
       content: message.content
     } as Message);
+  });
+
+  it("deletes message successfully", async () => {
+    const { user, doQuery } = await setUp();
+
+    const [message] = (await insertManyMessages(connection, {
+      content: "yes 1",
+      user
+    })) as Message[];
+
+    const variables: DeleteMessageMutationArgs = {
+      id: "" + message.id
+    };
+
+    const result = await doQuery({
+      query: DELETE_MESSAGE_MUTATION,
+
+      variables
+    });
+
+    const { deleteMessage: deleteResult } = result.data as {
+      deleteMessage: boolean;
+    };
+
+    expect(deleteResult).toBe(true);
   });
 });
 
@@ -129,7 +158,7 @@ describe("messages query", () => {
 
     const {
       messages: { edges, pageInfo }
-    } = <{ messages: MessageConnection }>result.data;
+    } = result.data as { messages: MessageConnection };
 
     const receivedMessages = [
       { content: "yes 2", user: user1 },
@@ -137,9 +166,9 @@ describe("messages query", () => {
     ];
 
     edges.forEach((edge, index) => {
-      const { node } = <MessageEdge>edge;
+      const { node } = edge as MessageEdge;
 
-      const { user, content } = <Message>node;
+      const { user, content } = node as Message;
 
       expect(user.id).toBe(userId);
 
@@ -153,7 +182,7 @@ describe("messages query", () => {
   });
 });
 
-async function setUp() {
+async function setUp({ subscription }: { subscription?: boolean } = {}) {
   connection = await createConnection();
 
   const user = await createUser(
@@ -173,7 +202,7 @@ async function setUp() {
       }
     },
 
-    { subscription: true }
+    { subscription }
   );
 
   stopServer = stop;

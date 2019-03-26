@@ -5,8 +5,8 @@ import {
   MutationResolvers,
   QueryResolvers
 } from "../apollo.generated";
-import { isAuthenticated } from "./resolvers";
-import { createMessage, listMessages } from "../contexts/chats";
+import { isAuthenticated, isMessageOwner } from "./resolvers";
+import { createMessage, listMessages, deleteMessage } from "../contexts/chats";
 import { User } from "../entity/user";
 import { pubsub, PubSubMessage } from "../subscriptions";
 import { getUserById } from "../contexts/accounts";
@@ -42,12 +42,26 @@ const messagesResolver: QueryResolvers.MessagesResolver = async function message
   };
 };
 
+const deleteMessageResolver: MutationResolvers.DeleteMessageResolver = async function deleteMessageResolverFunc(
+  root,
+  { id },
+  { connection }
+) {
+  return deleteMessage(connection, id);
+};
+
 export const messageResolver: IResolvers = {
   Mutation: {
     createMessage: combineResolvers(
       isAuthenticated,
 
       createMessageResolver
+    ),
+
+    deleteMessage: combineResolvers(
+      isMessageOwner,
+
+      deleteMessageResolver
     )
   },
 

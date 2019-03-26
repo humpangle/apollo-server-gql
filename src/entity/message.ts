@@ -51,10 +51,21 @@ export class Message implements RelayNode {
   cursor: string;
 
   constructor(args: MessageConstructorArgs = {}) {
-    Object.entries(args).forEach(([messageAttribute, attributeValue]) => {
+    Object.entries(args).forEach(([attribute, attributeValue]) => {
       if (attributeValue) {
+        if (attribute === "user_id") {
+          attribute = "userId";
+          attributeValue = +attributeValue;
+        } else if (attribute === "inserted_at") {
+          attribute = "insertedAt";
+          attributeValue = new Date(attributeValue);
+        } else if (attribute === "updated_at") {
+          attribute = "updatedAt";
+          attributeValue = new Date(attributeValue);
+        }
+
         (this as MessageConstructorArgs)[
-          messageAttribute as keyof MessageConstructorArgs
+          attribute as keyof MessageConstructorArgs
         ] = attributeValue;
       }
     });

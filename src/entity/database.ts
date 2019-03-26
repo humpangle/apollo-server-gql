@@ -132,3 +132,26 @@ export async function insertManyMessages(
 
   return result.generatedMaps;
 }
+
+// tslint:disable-next-line: no-any
+export async function getOneMessage(connection: Connection, ...queryArgs: any) {
+  const [queryString, args] = queryArgs;
+
+  const data = await connection
+    .getRepository(Message)
+    .createQueryBuilder("message")
+    .select(MESSAGE_RAW_PRIMARY_COLUMNS)
+    .where(queryString, args)
+    .getRawOne();
+
+  return data ? new Message(data) : data;
+}
+
+export async function deleteMessageById(
+  connection: Connection,
+  messageId: string | number
+) {
+  const result = await connection.getRepository(Message).delete(messageId);
+
+  return result.affected === 1;
+}
