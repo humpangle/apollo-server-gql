@@ -95,6 +95,24 @@ describe("Message mutation", () => {
       MESSAGE_NOT_FOUND_ERROR
     );
   });
+
+  it("returns error if user not authenticated", async () => {
+    const { mutate } = constructTestServer({});
+
+    const variables: DeleteMessageMutationArgs = {
+      id: "1"
+    };
+
+    const result = await mutate({
+      query: DELETE_MESSAGE_MUTATION,
+      variables
+      // tslint:disable-next-line: no-any
+    } as any);
+
+    expect((result.errors as ReadonlyArray<GraphQLError>)[0].message).toMatch(
+      NOT_AUTHENTICATED_AS_OWNER_ERROR
+    );
+  });
 });
 
 describe("list messages query", () => {
