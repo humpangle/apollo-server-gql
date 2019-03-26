@@ -1,5 +1,6 @@
 import { Connection, EntitySchema, ObjectType } from "typeorm";
 import bcrypt from "bcrypt-nodejs";
+import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 import { User, UserConstructorArgs } from "./user";
 import {
@@ -111,7 +112,7 @@ export async function insertManyUsers(
     .createQueryBuilder()
     .insert()
     .into(User)
-    .values(args)
+    .values(args as QueryDeepPartialEntity<User>[])
     .execute();
 
   return result.generatedMaps;

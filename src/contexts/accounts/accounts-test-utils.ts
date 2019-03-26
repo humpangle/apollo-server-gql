@@ -13,9 +13,7 @@ export const CREATE_USER = gql`
 export const USER_CREATION_DATA: CreateUserInput = {
   username: "123456",
   email: "a@b.com",
-  password: "123456",
-  firstName: "kanmii",
-  lastName: "ademii"
+  password: "123456"
 };
 
 export const LOGIN_USER_MUTATION = gql`

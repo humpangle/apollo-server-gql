@@ -17,9 +17,9 @@ type User {
 
   jwt: String!
 
-  firstName: String!
+  firstName: String
 
-  lastName: String!
+  lastName: String
 }
 
 type Query {
@@ -41,9 +41,9 @@ input CreateUserInput {
 
   password: String!
 
-  firstName: String!
+  firstName: String
 
-  lastName: String!
+  lastName: String
 }
 
 input LoginInput {

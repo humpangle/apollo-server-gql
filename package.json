@@ -8,7 +8,8 @@
     "start:dev": "nodemon --verbose --exec \"yarn dev\" ",
     "start:debug": "nodemon --exec \"yarn debug\" ",
     "start:staging": "yarn build && env-cmd .env.staging yarn typeorm migration:run && env-cmd .env.staging node build/index.js",
-    "dev": "env-cmd .env.dev yarn run-migrations && env-cmd .env.dev ts-node src/index.ts",
+    "dev": "env-cmd .env.dev ts-node src/index.ts",
+    "predev": "env-cmd .env.dev yarn run-migrations",
     "debug": "env-cmd .env.dev node --inspect --debug-brk -r ts-node/register src/index.ts",
     "build": "tsc && node copy-assets.js",
     "prebuild": "rimraf build",
@@ -18,7 +19,8 @@
     "test": "env-cmd .env.test jest --runInBand --watch",
     "test:coverage": "env-cmd .env.test jest --runInBand --coverage",
     "run-migrations": "yarn typeorm migration:run",
-    "make-migration": "env-cmd .env.dev ts-node node_modules/.bin/typeorm migration:generate"
+    "make-migration": "env-cmd .env.dev yarn typeorm migration:generate",
+    "revert-migration": "yarn typeorm migration:revert"
   },
   "dependencies": {
     "apollo-link": "1.2.11",
@@ -74,7 +76,8 @@
       "test/*",
       "docs/*",
       "**/*.test.*",
-      "**/*test-*.*"
+      "**/*test-*.*",
+      "src/migration/"
     ],
     "delay": "10",
     "watch": [

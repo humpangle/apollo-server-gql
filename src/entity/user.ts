@@ -14,11 +14,11 @@ import { EMAIL_INVALID_FORMAT_ERROR } from "../contexts";
 export interface UserConstructorArgs {
   username: string;
   email: string;
-  name?: string;
-  id?: number;
-  passwordHash?: string;
-  firstName: string;
-  lastName: string;
+  name?: string | null;
+  id?: number | null;
+  passwordHash?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
 }
 
 @Entity({
@@ -29,7 +29,8 @@ export class User {
   id: number;
 
   @Column({
-    unique: true
+    unique: true,
+    type: "citext"
   })
   username: string;
 
@@ -45,12 +46,14 @@ export class User {
   passwordHash: string;
 
   @Column({
-    name: "first_name"
+    name: "first_name",
+    nullable: true
   })
   firstName: string;
 
   @Column({
-    name: "last_name"
+    name: "last_name",
+    nullable: true
   })
   lastName: string;
 
