@@ -1,3 +1,4 @@
+// tslint:disable: no-console
 import { createConnection, Connection, getConnectionOptions } from "typeorm";
 import Graceful from "node-graceful";
 
@@ -46,6 +47,7 @@ function onShutdownListener(
   dbConnection: Connection,
   port: string
 ) {
+  // tslint:disable-next-line: no-any
   return function(done: () => void, event: any, signal: any) {
     console.warn(`!)\tGraceful ${signal} signal received.`);
 

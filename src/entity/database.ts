@@ -9,6 +9,7 @@ import {
   MessageConstructorArgs
 } from "./message";
 
+// tslint:disable-next-line: no-any
 export function getOneUser(connection: Connection, ...queryArgs: any) {
   const [queryString, args] = queryArgs;
 
@@ -48,8 +49,8 @@ export async function validateAssociates<TEntity>(
   ...params: ValidateAssociateArg<TEntity>[]
 ) {
   let hasError = false;
-  const errors = <{ [k: string]: string }>{};
-  const associates = <{ [k: string]: TEntity }>{};
+  const errors = {} as { [k: string]: string };
+  const associates = {} as { [k: string]: TEntity };
 
   for (let i = 0; i < params.length; i++) {
     const {
@@ -89,7 +90,7 @@ export function getMessages(
       .select(MESSAGE_RAW_PRIMARY_COLUMNS);
 
     if (userId) {
-      query.where("message.user_id = :userId", { userId: userId });
+      query.where("message.user_id = :userId", { userId });
     }
 
     if (offset !== undefined) {

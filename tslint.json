@@ -1,0 +1,27 @@
+{
+  "extends": ["tslint:recommended", "tslint-config-prettier"],
+  "linterOptions": {
+    "exclude": [
+      "./**/*.js",
+      "src/apollo.generated.ts",
+      "src/migration/**/*.ts",
+      "node_modules/**/*.ts"
+    ]
+  },
+  "rules": {
+    "member-access": false,
+    "object-literal-sort-keys": false,
+    "indent": [true, "spaces", 2],
+    "interface-name": [false],
+    "no-any": true,
+    "no-arg": true,
+    "ordered-imports": false,
+    "arrow-parens": false,
+    "trailing-comma": false,
+    "object-literal-key-quotes": false,
+    "only-arrow-functions": false,
+    "array-type": false,
+    "prefer-for-of": false,
+    "prefer-const": false
+  }
+}

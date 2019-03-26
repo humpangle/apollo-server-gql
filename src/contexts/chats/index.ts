@@ -36,7 +36,7 @@ export async function createMessage(
 
   const associationErrors = await validateAssociates(connection, {
     type: User,
-    data: <User>user,
+    data: user as User,
     field: "user"
   });
 

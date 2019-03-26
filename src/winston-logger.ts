@@ -65,6 +65,7 @@ export class TypeORMLogger implements ITypeORMLogger {
     format
   });
 
+  // tslint:disable-next-line: no-any
   public logQuery(query: string, parameters?: any[] | undefined) {
     TypeORMLogger.winstonLogger.info(this.prefix("Query"), {
       query,
@@ -75,6 +76,7 @@ export class TypeORMLogger implements ITypeORMLogger {
   public logQueryError(
     error: string,
     query: string,
+    // tslint:disable-next-line: no-any
     parameters?: any[] | undefined
   ) {
     TypeORMLogger.winstonLogger.warn(this.prefix("Query Error"), {
@@ -87,6 +89,7 @@ export class TypeORMLogger implements ITypeORMLogger {
   public logQuerySlow(
     time: number,
     query: string,
+    // tslint:disable-next-line: no-any
     parameters?: any[] | undefined
   ) {
     TypeORMLogger.winstonLogger.warn(this.prefix(`Query Slow ${time}`), {
@@ -107,6 +110,7 @@ export class TypeORMLogger implements ITypeORMLogger {
     });
   }
 
+  // tslint:disable-next-line: no-any
   public log(level: "log" | "info" | "warn", message: any) {
     TypeORMLogger.winstonLogger.info(this.prefix(level), {
       message

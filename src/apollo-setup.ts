@@ -62,7 +62,7 @@ export function constructServer(
       app.use(
         morganLogger("combined", {
           stream: {
-            write: function(message) {
+            write(message) {
               logger.info(message, {
                 type: "[HTTP]"
               });

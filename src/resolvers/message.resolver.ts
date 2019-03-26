@@ -11,12 +11,12 @@ import { User } from "../entity/user";
 import { pubsub, PubSubMessage } from "../subscriptions";
 import { getUserById } from "../contexts/accounts";
 
-const createMessageResolver: MutationResolvers.CreateMessageResolver = async function createMessageResolver(
+const createMessageResolver: MutationResolvers.CreateMessageResolver = async function createMessageResolverFunc(
   root,
   { input },
   { connection, currentUser }
 ) {
-  const message = await createMessage(input, connection, <User>currentUser);
+  const message = await createMessage(input, connection, currentUser as User);
 
   pubsub.publish(PubSubMessage.messageCreated, {
     messageCreated: { message }
@@ -25,7 +25,7 @@ const createMessageResolver: MutationResolvers.CreateMessageResolver = async fun
   return message;
 };
 
-const messagesResolver: QueryResolvers.MessagesResolver = async function messagesResolver(
+const messagesResolver: QueryResolvers.MessagesResolver = async function messagesResolverFunc(
   root,
   { input },
   { connection, currentUser }
