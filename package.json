@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "yarn typeorm migration:run && node build/index.js",
+    "start:all": "concurrently \"yarn generate:watch\" \"yarn start:dev\"",
     "start:dev": "nodemon --verbose --exec \"yarn dev\" ",
     "start:debug": "nodemon --exec \"yarn debug\" ",
     "start:staging": "yarn build && env-cmd .env.staging yarn typeorm migration:run && env-cmd .env.staging node build/index.js",
@@ -58,6 +59,7 @@
     "@types/node-fetch": "2.1.6",
     "apollo-server-testing": "2.4.8",
     "chokidar-cli": "1.2.2",
+    "concurrently": "4.1.0",
     "env-cmd": "8.0.2",
     "graphql-code-generator": "0.18.0",
     "graphql-codegen-typescript-common": "0.18.0",
