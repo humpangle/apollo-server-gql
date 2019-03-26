@@ -8,7 +8,7 @@ import {
 } from "../apollo.generated";
 import { User } from "../entity/user";
 import { createUser } from "../contexts/accounts";
-import { USER_CREATION_DATA } from "../contexts/accounts/accounts-test-utils";
+import { USER_CREATION_DATA } from "./utils";
 import { insertManyUsers, insertManyMessages } from "../entity/database";
 
 let connection: Connection;

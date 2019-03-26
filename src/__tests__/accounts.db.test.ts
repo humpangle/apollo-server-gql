@@ -3,7 +3,7 @@ import { createConnection, Connection } from "typeorm";
 // import { dbConnectionOptions } from "../../../ormconfig";
 import { createUser } from "../contexts/accounts";
 import { EMAIL_INVALID_FORMAT_ERROR } from "../contexts";
-import { USER_CREATION_DATA } from "../contexts/accounts/accounts-test-utils";
+import { USER_CREATION_DATA } from "./utils";
 
 describe("user context", () => {
   let connection: Connection;

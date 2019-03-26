@@ -73,10 +73,7 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "test/*",
-      "docs/*",
-      "**/*.test.*",
-      "**/*test-*.*",
+      "src/__tests__/",
       "src/migration/"
     ],
     "delay": "10",

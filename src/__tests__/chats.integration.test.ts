@@ -6,10 +6,10 @@ import {
   MessagesQueryArgs
 } from "../apollo.generated";
 import {
+  constructTestServer,
   CREATE_MESSAGE_MUTATION,
   LIST_MESSAGES_QUERY
-} from "../contexts/chats/chats-test.utils";
-import { constructTestServer } from "../test-utils";
+} from "./utils";
 
 describe("Create message mutation", () => {
   it("returns error if unauthenticated user", async () => {

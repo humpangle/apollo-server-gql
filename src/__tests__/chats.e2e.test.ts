@@ -1,12 +1,14 @@
 import { Connection, createConnection } from "typeorm";
 
-import { startTestServer, ExecuteGraphqlSubscriptionFn } from "../test-utils";
-import { constructServer, AUTHORIZATION_HEADER_PREFIX } from "../apollo-setup";
 import {
+  startTestServer,
+  ExecuteGraphqlSubscriptionFn,
   CREATE_MESSAGE_MUTATION,
   LIST_MESSAGES_QUERY,
-  SUBSCRIBE_TO_NEW_MESSAGE
-} from "../contexts/chats/chats-test.utils";
+  SUBSCRIBE_TO_NEW_MESSAGE,
+  USER_CREATION_DATA
+} from "./utils";
+import { constructServer, AUTHORIZATION_HEADER_PREFIX } from "../apollo-setup";
 import {
   CreateMessageMutationArgs,
   MessagesQueryArgs,
@@ -17,7 +19,6 @@ import {
 } from "../apollo.generated";
 import { createToken } from "../contexts";
 import { createUser } from "../contexts/accounts";
-import { USER_CREATION_DATA } from "../contexts/accounts/accounts-test-utils";
 import { Message } from "../entity/message";
 import { User } from "../entity/user";
 import { insertManyUsers, insertManyMessages } from "../entity/database";

@@ -7,10 +7,12 @@ import { HttpOptions } from "apollo-link-http-common";
 import { WebSocketLink } from "apollo-link-ws";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import ws from "ws";
-
-import { OurContext, typeDefsAndResolvers } from "./apollo-setup";
 import { Server } from "http";
 import { AddressInfo } from "net";
+import gql from "graphql-tag";
+
+import { OurContext, typeDefsAndResolvers } from "../apollo-setup";
+import { CreateUserInput } from "../apollo.generated";
 
 interface ConstructTestServerArgs {
   context?: Partial<OurContext>;
@@ -123,3 +125,84 @@ export type ExecuteGraphqlSubscriptionFn = <T>(
     Record<string, any>
   >
 >;
+
+export const CREATE_USER = gql`
+  mutation CreateAUser($input: CreateUserInput!) {
+    createUser(input: $input) {
+      jwt
+    }
+  }
+`;
+
+export const USER_CREATION_DATA: CreateUserInput = {
+  username: "123456",
+  email: "a@b.com",
+  password: "123456"
+};
+
+export const LOGIN_USER_MUTATION = gql`
+  mutation LoginUser($input: LoginInput!) {
+    login(input: $input) {
+      id
+      jwt
+    }
+  }
+`;
+
+export const CREATE_MESSAGE_MUTATION = gql`
+  mutation CreateAMessage($input: CreateMessageInput!) {
+    createMessage(input: $input) {
+      id
+      content
+      insertedAt
+      updatedAt
+      user {
+        id
+      }
+    }
+  }
+`;
+
+export const LIST_MESSAGES_QUERY = gql`
+  query ListMessages($input: ConnectionInput) {
+    messages(input: $input) {
+      edges {
+        cursor
+
+        node {
+          id
+          content
+          insertedAt
+          updatedAt
+          user {
+            id
+            jwt
+          }
+        }
+      }
+
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        endCursor
+        startCursor
+      }
+    }
+  }
+`;
+
+export const SUBSCRIBE_TO_NEW_MESSAGE = gql`
+  subscription NewMessageSubscription {
+    messageCreated {
+      message {
+        id
+        content
+
+        user {
+          id
+          jwt
+        }
+      }
+    }
+  }
+`;

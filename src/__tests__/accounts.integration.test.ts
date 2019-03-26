@@ -2,14 +2,10 @@ import { GraphQLError } from "graphql";
 import { GraphQLResponse } from "graphql-extensions";
 import { ApolloError } from "apollo-server-core";
 
-import { constructTestServer } from "../test-utils";
+import { constructTestServer } from "./utils";
 import { CreateUserMutationArgs, LoginMutationArgs } from "../apollo.generated";
 import { User } from "../entity/user";
-import {
-  CREATE_USER,
-  USER_CREATION_DATA,
-  LOGIN_USER_MUTATION
-} from "../contexts/accounts/accounts-test-utils";
+import { CREATE_USER, USER_CREATION_DATA, LOGIN_USER_MUTATION } from "./utils";
 
 jest.mock("../contexts/accounts");
 

@@ -13,5 +13,5 @@ module.exports = {
     "<rootDir>/node_modules/",
     "<rootDir>/src/.+?db.test.ts"
   ],
-  testRegex: "src/__tests__/.*"
+  testRegex: "src/__tests__/.+?\\.test\\.ts$"
 };

@@ -7,7 +7,7 @@ import {
 } from "../contexts/accounts";
 import { EMAIL_INVALID_FORMAT_ERROR } from "../contexts";
 import { User } from "../entity/user";
-import { USER_CREATION_DATA } from "../contexts/accounts/accounts-test-utils";
+import { USER_CREATION_DATA } from "./utils";
 import { LoginInput } from "../apollo.generated";
 
 jest.mock("../entity/database");
